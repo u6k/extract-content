@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	version="2.5">
+
+	<servlet>
+		<servlet-name>Extract_content</servlet-name>
+		<servlet-class>jp.gr.java_conf.u6k.extract_content.ExtractContentServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Extract_content</servlet-name>
+		<url-pattern>/extract_content</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
