@@ -24,6 +24,10 @@ public class ExtractContentServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         LOG.entering(getClass().getName(), "doGet");
 
+        // バージョンを出力する。
+        String version = getServletContext().getInitParameter("version");
+        resp.addHeader("X-Version", version);
+
         // リクエストパラメータを取得する。
         String reqUrl = req.getParameter("url");
         String strUrl = URLDecoder.decode(reqUrl, "UTF-8");
