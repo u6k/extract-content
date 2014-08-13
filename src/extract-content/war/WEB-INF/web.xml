@@ -8,15 +8,20 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     version="2.5">
 
     <servlet>
-        <servlet-name>Extract_content</servlet-name>
+        <servlet-name>ExtractContentServlet</servlet-name>
         <servlet-class>jp.gr.java_conf.u6k.extract_content.web.api.ExtractContentServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Extract_content</servlet-name>
+        <servlet-name>ExtractContentServlet</servlet-name>
         <url-pattern>/api/extract</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <context-param>
+        <param-name>version</param-name>
+        <param-value>20140814_0411</param-value>
+    </context-param>
 </web-app>
