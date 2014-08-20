@@ -56,10 +56,8 @@ public class ExtractContentServlet extends HttpServlet {
                     bout.write(buf, 0, len);
                 }
 
-                LOG.info("none:" + bout.toString());
-                LOG.info("UTF-8:" + bout.toString("UTF-8"));
-
-                html = bout.toString();
+                // TODO レスポンスのContent-Typeから文字セットを取得する。
+                html = bout.toString("UTF-8");
             } finally {
                 in.close();
             }
