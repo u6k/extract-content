@@ -56,7 +56,8 @@ public class ExtractContentServlet extends HttpServlet {
                     bout.write(buf, 0, len);
                 }
 
-                html = bout.toString();
+                // TODO レスポンスのContent-Typeから文字セットを取得する。
+                html = bout.toString("UTF-8");
             } finally {
                 in.close();
             }
@@ -92,7 +93,15 @@ public class ExtractContentServlet extends HttpServlet {
 
         String article = html.substring(articleStart, articleEnd);
 
-        String resultHtml = "<html><body><div style=\"font-size: 100%\">" + article + "</div><div style=\"font-size: 100%\">original: <a href=\"" + strUrl + "\">" + strUrl + "</a></div></body></html>";
+        String resultHtml = "<html>";
+        resultHtml += "<head>";
+        resultHtml += "<meta http-equiv=\"Content-Type\" content=\"" + contentType + "\"/>";
+        resultHtml += "</head>";
+        resultHtml += "<body>";
+        resultHtml += "<div style=\"font-size: 100%\">" + article + "</div>";
+        resultHtml += "<div style=\"font-size: 100%\">original: <a href=\"" + strUrl + "\">" + strUrl + "</a></div>";
+        resultHtml += "</body>";
+        resultHtml += "</html>";
 
         resp.setContentType(contentType);
         PrintWriter w = resp.getWriter();
