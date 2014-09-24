@@ -9,6 +9,7 @@ import javax.jdo.Query;
 
 import jp.gr.java_conf.u6k.extract_content.web.api.util.StringUtil;
 import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaDuplicateException;
+import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaNotFoundException;
 
 public class WebSiteMetaDao {
 
@@ -61,6 +62,36 @@ public class WebSiteMetaDao {
         // 登録。
         WebSiteMeta meta = new WebSiteMeta(urlPattern, contentStartPattern, contentEndPattern);
         this.pm.makePersistent(meta);
+    }
+
+    public void update(String id, String urlPattern, String contentStartPattern, String contentEndPattern) {
+        // パラメータを検証する。
+        if (StringUtil.isNullOrEmpty(id)) {
+            throw new IllegalArgumentException("id is empty.");
+        }
+
+        // URLパターンの重複チェック。
+        List<WebSiteMeta> metaList = findByUrlPattern(urlPattern);
+        if (metaList.size() > 0) {
+            throw new WebSiteMetaDuplicateException(urlPattern);
+        }
+
+        // 存在チェック。
+        WebSiteMeta meta = findById(id);
+        if (meta == null) {
+            throw new WebSiteMetaNotFoundException(id);
+        }
+
+        // 更新。
+        if (!StringUtil.isNullOrEmpty(urlPattern)) {
+            meta.setUrlPattern(urlPattern);
+        }
+        if (!StringUtil.isNullOrEmpty(contentStartPattern)) {
+            meta.setContentStartPattern(contentStartPattern);
+        }
+        if (!StringUtil.isNullOrEmpty(contentEndPattern)) {
+            meta.setContentEndPattern(contentEndPattern);
+        }
     }
 
     /**

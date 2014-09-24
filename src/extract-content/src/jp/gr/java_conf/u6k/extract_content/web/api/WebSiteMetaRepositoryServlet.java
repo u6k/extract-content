@@ -16,6 +16,7 @@ import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMeta;
 import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMetaDao;
 import jp.gr.java_conf.u6k.extract_content.web.api.util.StringUtil;
 import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaDuplicateException;
+import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaNotFoundException;
 
 import com.google.appengine.api.datastore.KeyFactory;
 
@@ -161,6 +162,54 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
             }
         } catch (IllegalArgumentException e) {
             LOG.log(Level.WARNING, "error", e);
+            resp.setStatus(400);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
+        } catch (RuntimeException e) {
+            LOG.log(Level.SEVERE, "error", e);
+            resp.setStatus(500);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
+        }
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
+
+            // パラメータを取得する。
+            String id = StringUtil.trim(req.getParameter("id"));
+            String urlPattern = StringUtil.trim(req.getParameter("urlPattern"));
+            String contentStartPattern = StringUtil.trim(req.getParameter("contentStartPattern"));
+            String contentEndPattern = StringUtil.trim(req.getParameter("contentEndPattern"));
+
+            LOG.finer("param: id=" + id);
+            LOG.finer("param: urlPattern=" + urlPattern);
+            LOG.finer("param: contentStartPattern=" + contentStartPattern);
+            LOG.finer("param: contentEndPattern=" + contentEndPattern);
+
+            // DBを更新する。検証はDAOに任せる。
+            WebSiteMetaDao dao = new WebSiteMetaDao();
+            try {
+                dao.update(id, urlPattern, contentStartPattern, contentEndPattern);
+            } finally {
+                dao.close();
+            }
+        } catch (IllegalArgumentException | WebSiteMetaDuplicateException | WebSiteMetaNotFoundException e) {
+            LOG.log(Level.SEVERE, "meta update failure.", e);
             resp.setStatus(400);
             resp.setContentType("text/plain");
 
