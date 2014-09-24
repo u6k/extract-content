@@ -1,3 +1,4 @@
+src/extract-content/.settings/
 src/extract-content/war/WEB-INF/classes
 src/extract-content/war/WEB-INF/lib/appengine-*
 src/extract-content/war/WEB-INF/lib/asm-*
@@ -6,3 +7,4 @@ src/extract-content/war/WEB-INF/lib/geronimo-jpa_*
 src/extract-content/war/WEB-INF/lib/jdo-api-*
 src/extract-content/war/WEB-INF/lib/jsr107cache-*
 src/extract-content/war/WEB-INF/lib/jta-*
+src/extract-content/war/WEB-INF/appengine-generated/
