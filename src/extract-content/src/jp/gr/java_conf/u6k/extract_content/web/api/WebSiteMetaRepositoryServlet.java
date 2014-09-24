@@ -29,6 +29,10 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
+
             // パラメータを取得する。
             String urlPattern = StringUtil.trim(req.getParameter("urlPattern"));
             String contentStartPattern = StringUtil.trim(req.getParameter("contentStartPattern"));
