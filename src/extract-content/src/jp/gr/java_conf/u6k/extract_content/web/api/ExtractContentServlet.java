@@ -118,7 +118,7 @@ public class ExtractContentServlet extends HttpServlet {
                 throw new UrlNotMatchException(reqUrl);
             }
         } catch (IllegalArgumentException | UrlNotMatchException | ContentExtractFailException e) {
-            LOG.log(Level.WARNING, "meta create failure.", e);
+            LOG.log(Level.WARNING, "content extract failure.", e);
             resp.setStatus(400);
             resp.setContentType("text/plain");
 
@@ -128,7 +128,7 @@ public class ExtractContentServlet extends HttpServlet {
 
             return;
         } catch (RuntimeException e) {
-            LOG.log(Level.WARNING, "meta create failure.", e);
+            LOG.log(Level.WARNING, "error.", e);
             resp.setStatus(500);
             resp.setContentType("text/plain");
 
