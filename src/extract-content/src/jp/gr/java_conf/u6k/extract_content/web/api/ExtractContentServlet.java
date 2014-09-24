@@ -76,8 +76,13 @@ public class ExtractContentServlet extends HttpServlet {
             }
 
             // HTMLを出力する。
+            List<?> metaList;
             WebSiteMetaDao dao = new WebSiteMetaDao();
-            List<?> metaList = dao.findAll();
+            try {
+                metaList = dao.findAll();
+            } finally {
+                dao.close();
+            }
 
             boolean isMatch = false;
 

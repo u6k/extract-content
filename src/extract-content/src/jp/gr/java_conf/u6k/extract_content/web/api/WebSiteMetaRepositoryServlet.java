@@ -34,6 +34,8 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
             // パラメータを取得する。
             String id = StringUtil.trim(req.getParameter("id"));
 
+            LOG.finer("param: id=" + id);
+
             if (id.length() == 0) {
                 // メタ情報を全検索する。
                 WebSiteMetaDao dao = new WebSiteMetaDao();
@@ -50,8 +52,13 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
                 w.flush();
             } else {
                 // メタ情報を取得する。
+                WebSiteMeta meta;
                 WebSiteMetaDao dao = new WebSiteMetaDao();
-                WebSiteMeta meta = dao.findById(id);
+                try {
+                    meta = dao.findById(id);
+                } finally {
+                    dao.close();
+                }
 
                 // 検索結果を出力する。
                 resp.setContentType("text/plain");
@@ -110,7 +117,58 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
                 w.flush();
 
                 return;
+            } finally {
+                dao.close();
             }
+        } catch (RuntimeException e) {
+            LOG.log(Level.SEVERE, "error", e);
+            resp.setStatus(500);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
+
+            // パラメータを取得する。
+            String id = StringUtil.trim(req.getParameter("id"));
+
+            LOG.finer("param: id=" + id);
+
+            // DBから削除する。検証はDAOに任せる。
+            boolean result;
+
+            WebSiteMetaDao dao = new WebSiteMetaDao();
+            try {
+                result = dao.delete(id);
+            } finally {
+                dao.close();
+            }
+
+            if (!result) {
+                resp.setStatus(404);
+                return;
+            }
+        } catch (IllegalArgumentException e) {
+            LOG.log(Level.WARNING, "error", e);
+            resp.setStatus(400);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
         } catch (RuntimeException e) {
             LOG.log(Level.SEVERE, "error", e);
             resp.setStatus(500);
