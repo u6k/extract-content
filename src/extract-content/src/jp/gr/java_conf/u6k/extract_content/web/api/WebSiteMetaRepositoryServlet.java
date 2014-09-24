@@ -3,6 +3,7 @@ package jp.gr.java_conf.u6k.extract_content.web.api;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,9 +12,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMeta;
 import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMetaDao;
 import jp.gr.java_conf.u6k.extract_content.web.api.util.StringUtil;
 import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaDuplicateException;
+
+import com.google.appengine.api.datastore.KeyFactory;
 
 @SuppressWarnings("serial")
 public class WebSiteMetaRepositoryServlet extends HttpServlet {
@@ -22,8 +26,35 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doGet(req, resp);
+        try {
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
+
+            // メタ情報を全検索する。
+            WebSiteMetaDao dao = new WebSiteMetaDao();
+            List<WebSiteMeta> metaList = dao.findAll();
+
+            // 検索結果を出力する。
+            resp.setContentType("text/plain");
+            PrintWriter w = resp.getWriter();
+
+            for (WebSiteMeta meta : metaList) {
+                w.write(KeyFactory.keyToString(meta.getKey()) + " " + meta.getUrlPattern() + "\n");
+            }
+
+            w.flush();
+        } catch (RuntimeException e) {
+            LOG.log(Level.SEVERE, "error", e);
+            resp.setStatus(500);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
+        }
     }
 
     @Override

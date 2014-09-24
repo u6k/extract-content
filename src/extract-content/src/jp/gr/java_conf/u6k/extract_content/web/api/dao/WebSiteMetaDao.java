@@ -38,7 +38,7 @@ public class WebSiteMetaDao {
         // URLパターンの重複チェック。
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
-        List<?> result = findByUrlPattern(pm, urlPattern);
+        List<WebSiteMeta> result = findByUrlPattern(pm, urlPattern);
 
         if (result.size() > 0) {
             throw new WebSiteMetaDuplicateException(urlPattern);
@@ -58,20 +58,22 @@ public class WebSiteMetaDao {
      * 
      * @return 全てのWebサイトメタ情報。
      */
-    public List<?> findAll() {
+    public List<WebSiteMeta> findAll() {
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
         Query query = pm.newQuery(WebSiteMeta.class);
-        List<?> result = (List<?>) query.execute();
+        @SuppressWarnings("unchecked")
+        List<WebSiteMeta> result = (List<WebSiteMeta>) query.execute();
 
         return result;
     }
 
-    private List<?> findByUrlPattern(PersistenceManager pm, String urlPattern) {
+    private List<WebSiteMeta> findByUrlPattern(PersistenceManager pm, String urlPattern) {
         Query query = pm.newQuery(WebSiteMeta.class);
         query.setFilter("urlPattern == pUrlPattern");
         query.declareParameters("String pUrlPattern");
-        List<?> result = (List<?>) query.execute(urlPattern);
+        @SuppressWarnings("unchecked")
+        List<WebSiteMeta> result = (List<WebSiteMeta>) query.execute(urlPattern);
 
         return result;
     }
