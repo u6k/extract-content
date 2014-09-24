@@ -91,19 +91,17 @@ public class ExtractContentServlet extends HttpServlet {
 
                     pattern = Pattern.compile(meta.getContentStartPattern());
                     matcher = pattern.matcher(html);
-                    if (!matcher.matches()) {
+                    if (!matcher.find()) {
                         throw new ContentExtractFailException("content start not match.", meta.getUrlPattern());
                     }
-                    matcher.find();
                     int contentStartIndex = matcher.start();
 
                     pattern = Pattern.compile(meta.getContentEndPattern());
                     matcher = pattern.matcher(html);
-                    if (!matcher.matches()) {
+                    if (!matcher.find()) {
                         throw new ContentExtractFailException("content end not match.", meta.getUrlPattern());
                     }
-                    matcher.find();
-                    int contentEndIndex = matcher.start();
+                    int contentEndIndex = matcher.end();
 
                     String content = html.substring(contentStartIndex, contentEndIndex);
 
