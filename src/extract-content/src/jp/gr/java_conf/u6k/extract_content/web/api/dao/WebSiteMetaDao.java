@@ -12,7 +12,7 @@ import jp.gr.java_conf.u6k.extract_content.web.exception.WebSiteMetaDuplicateExc
 public class WebSiteMetaDao {
 
     /**
-     * Webページのメタ情報を登録する。
+     * Webサイトメタ情報を登録する。
      * 
      * @param urlPattern
      *            URLパターン。
@@ -38,12 +38,9 @@ public class WebSiteMetaDao {
         // URLパターンの重複チェック。
         PersistenceManager pm = PMF.get().getPersistenceManager();
 
-        Query query = pm.newQuery(WebSiteMeta.class);
-        query.setFilter("urlPattern == pUrlPattern");
-        query.declareParameters("String pUrlPattern");
-        List<?> resultList = (List<?>) query.execute(urlPattern);
+        List<?> result = findByUrlPattern(pm, urlPattern);
 
-        if (resultList.size() > 0) {
+        if (result.size() > 0) {
             throw new WebSiteMetaDuplicateException(urlPattern);
         }
 
@@ -54,6 +51,29 @@ public class WebSiteMetaDao {
         } finally {
             pm.close();
         }
+    }
+
+    /**
+     * 全てのWebサイトメタ情報を取得する。
+     * 
+     * @return 全てのWebサイトメタ情報。
+     */
+    public List<?> findAll() {
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+
+        Query query = pm.newQuery(WebSiteMeta.class);
+        List<?> result = (List<?>) query.execute();
+
+        return result;
+    }
+
+    private List<?> findByUrlPattern(PersistenceManager pm, String urlPattern) {
+        Query query = pm.newQuery(WebSiteMeta.class);
+        query.setFilter("urlPattern == pUrlPattern");
+        query.declareParameters("String pUrlPattern");
+        List<?> result = (List<?>) query.execute(urlPattern);
+
+        return result;
     }
 
 }

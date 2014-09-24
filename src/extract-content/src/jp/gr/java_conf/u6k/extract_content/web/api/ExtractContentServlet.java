@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,97 +18,128 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMeta;
+import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMetaDao;
+import jp.gr.java_conf.u6k.extract_content.web.api.util.StringUtil;
+import jp.gr.java_conf.u6k.extract_content.web.exception.ContentExtractFailException;
+import jp.gr.java_conf.u6k.extract_content.web.exception.UrlNotMatchException;
+
 @SuppressWarnings("serial")
 public class ExtractContentServlet extends HttpServlet {
 
     private static final Logger LOG = Logger.getLogger(ExtractContentServlet.class.getName());
 
     public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        LOG.entering(getClass().getName(), "doGet");
-
-        // バージョンを出力する。
-        String version = getServletContext().getInitParameter("version");
-        resp.addHeader("X-Version", version);
-
-        // リクエストパラメータを取得する。
-        String reqUrl = req.getParameter("url");
-        String strUrl = URLDecoder.decode(reqUrl, "UTF-8");
-
-        LOG.info("url=" + reqUrl);
-        LOG.info("url(decode)=" + strUrl);
-
-        // 指定したWebページを取得する。
-        String html;
-        String contentType;
-
-        URL url = new URL(strUrl);
-        HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
         try {
-            urlCon.setRequestProperty("Content-Type", "text/html");
-            urlCon.setRequestMethod("GET");
-            urlCon.setConnectTimeout(10000);
-            InputStream in = urlCon.getInputStream();
-            try {
-                contentType = urlCon.getContentType();
-                ByteArrayOutputStream bout = new ByteArrayOutputStream();
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
 
-                int len;
-                byte[] buf = new byte[1024 * 1024];
-                while ((len = in.read(buf)) != -1) {
-                    bout.write(buf, 0, len);
-                }
+            // リクエストパラメータを取得する。
+            String reqUrl = StringUtil.trim(req.getParameter("url"));
+            LOG.info("url=" + reqUrl);
 
-                // TODO レスポンスのContent-Typeから文字セットを取得する。
-                html = bout.toString("UTF-8");
-            } finally {
-                in.close();
+            // パラメータを検証する。
+            if (StringUtil.isNullOrEmpty(reqUrl)) {
+                throw new IllegalArgumentException("url is empty.");
             }
-        } finally {
-            urlCon.disconnect();
+
+            // 指定したWebページを取得する。
+            String html;
+            String contentType;
+
+            reqUrl = URLDecoder.decode(reqUrl, "UTF-8");
+            URL url = new URL(reqUrl);
+            HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
+            try {
+                urlCon.setRequestProperty("Content-Type", "text/html");
+                urlCon.setRequestMethod("GET");
+                urlCon.setConnectTimeout(10000);
+                InputStream in = urlCon.getInputStream();
+                try {
+                    contentType = urlCon.getContentType();
+                    ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+                    int len;
+                    byte[] buf = new byte[1024 * 1024];
+                    while ((len = in.read(buf)) != -1) {
+                        bout.write(buf, 0, len);
+                    }
+
+                    // TODO レスポンスのContent-Typeから文字セットを取得する。
+                    html = bout.toString("UTF-8");
+                } finally {
+                    in.close();
+                }
+            } finally {
+                urlCon.disconnect();
+            }
+
+            // HTMLを出力する。
+            WebSiteMetaDao dao = new WebSiteMetaDao();
+            List<?> metaList = dao.findAll();
+
+            boolean isMatch = false;
+
+            for (int i = 0; i < metaList.size(); i++) {
+                WebSiteMeta meta = (WebSiteMeta) metaList.get(i);
+
+                Pattern pattern = Pattern.compile(meta.getUrlPattern());
+                Matcher matcher = pattern.matcher(reqUrl);
+                if (matcher.matches()) {
+                    isMatch = true;
+
+                    pattern = Pattern.compile(meta.getContentStartPattern());
+                    matcher = pattern.matcher(html);
+                    if (!matcher.matches()) {
+                        throw new ContentExtractFailException("content start not match.", meta.getUrlPattern());
+                    }
+                    matcher.find();
+                    int contentStartIndex = matcher.start();
+
+                    pattern = Pattern.compile(meta.getContentEndPattern());
+                    matcher = pattern.matcher(html);
+                    if (!matcher.matches()) {
+                        throw new ContentExtractFailException("content end not match.", meta.getUrlPattern());
+                    }
+                    matcher.find();
+                    int contentEndIndex = matcher.start();
+
+                    String content = html.substring(contentStartIndex, contentEndIndex);
+
+                    resp.setContentType(contentType);
+                    PrintWriter w = resp.getWriter();
+                    w.write(content);
+                    w.flush();
+
+                    break;
+                }
+            }
+
+            if (!isMatch) {
+                throw new UrlNotMatchException(reqUrl);
+            }
+        } catch (IllegalArgumentException | UrlNotMatchException | ContentExtractFailException e) {
+            LOG.log(Level.WARNING, "meta create failure.", e);
+            resp.setStatus(400);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
+        } catch (RuntimeException e) {
+            LOG.log(Level.WARNING, "meta create failure.", e);
+            resp.setStatus(500);
+            resp.setContentType("text/plain");
+
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+
+            return;
         }
-
-        // HTMLを出力する。
-
-        // Pattern pattern = Pattern.compile("<body.*?>");
-        // Matcher matcher = pattern.matcher(html);
-        // System.out.println(matcher.find());
-        // System.out.println(matcher.group());
-        // int bodyStart = matcher.start();
-
-        // pattern = Pattern.compile("</body>");
-        // matcher = pattern.matcher(html);
-        // System.out.println(matcher.find());
-        // System.out.println(matcher.group());
-        // int bodyEnd = matcher.start();
-
-        Pattern pattern = Pattern.compile("<div class=\"article-header\">");
-        Matcher matcher = pattern.matcher(html);
-        matcher.find();
-        matcher.group();
-        int articleStart = matcher.start();
-
-        pattern = Pattern.compile("<!-- articleOption End -->");
-        matcher = pattern.matcher(html);
-        matcher.find();
-        matcher.group();
-        int articleEnd = matcher.start();
-
-        String article = html.substring(articleStart, articleEnd);
-
-        String resultHtml = "<html>";
-        resultHtml += "<head>";
-        resultHtml += "<meta http-equiv=\"Content-Type\" content=\"" + contentType + "\"/>";
-        resultHtml += "</head>";
-        resultHtml += "<body>";
-        resultHtml += "<div style=\"font-size: 100%\">" + article + "</div>";
-        resultHtml += "<div style=\"font-size: 100%\">original: <a href=\"" + strUrl + "\">" + strUrl + "</a></div>";
-        resultHtml += "</body>";
-        resultHtml += "</html>";
-
-        resp.setContentType(contentType);
-        PrintWriter w = resp.getWriter();
-        w.write(resultHtml);
-        w.close();
     }
 
 }
