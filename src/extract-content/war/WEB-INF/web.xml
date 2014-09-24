@@ -30,6 +30,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 
     <context-param>
         <param-name>version</param-name>
-        <param-value>20140820_1945</param-value>
+        <param-value>20140924_1458</param-value>
     </context-param>
 </web-app>
