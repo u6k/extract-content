@@ -3,6 +3,7 @@ package jp.gr.java_conf.u6k.extract_content.web.api.dao;
 
 import java.util.List;
 
+import javax.jdo.JDOObjectNotFoundException;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
@@ -56,7 +57,7 @@ public class WebSiteMetaDao {
     /**
      * 全てのWebサイトメタ情報を取得する。
      * 
-     * @return 全てのWebサイトメタ情報。
+     * @return 全てのWebサイトメタ情報。該当するデータが存在しない場合、0件のリストを返す。
      */
     public List<WebSiteMeta> findAll() {
         PersistenceManager pm = PMF.get().getPersistenceManager();
@@ -66,6 +67,27 @@ public class WebSiteMetaDao {
         List<WebSiteMeta> result = (List<WebSiteMeta>) query.execute();
 
         return result;
+    }
+
+    /**
+     * キー文字列を指定して、Webサイトメタ情報を取得する。
+     * 
+     * @param id
+     *            キー文字列。
+     * @return Webサイトメタ情報。該当するデータが存在しない場合、nullを返す。
+     */
+    public WebSiteMeta findById(String id) {
+        WebSiteMeta meta;
+
+        PersistenceManager pm = PMF.get().getPersistenceManager();
+
+        try {
+            meta = pm.getObjectById(WebSiteMeta.class, id);
+        } catch (JDOObjectNotFoundException e) {
+            meta = null;
+        }
+
+        return meta;
     }
 
     private List<WebSiteMeta> findByUrlPattern(PersistenceManager pm, String urlPattern) {

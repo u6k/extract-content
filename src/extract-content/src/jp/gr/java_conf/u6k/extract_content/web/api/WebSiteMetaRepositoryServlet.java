@@ -31,19 +31,42 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
             String version = getServletContext().getInitParameter("version");
             resp.addHeader("X-Version", version);
 
-            // メタ情報を全検索する。
-            WebSiteMetaDao dao = new WebSiteMetaDao();
-            List<WebSiteMeta> metaList = dao.findAll();
+            // パラメータを取得する。
+            String id = StringUtil.trim(req.getParameter("id"));
 
-            // 検索結果を出力する。
-            resp.setContentType("text/plain");
-            PrintWriter w = resp.getWriter();
+            if (id.length() == 0) {
+                // メタ情報を全検索する。
+                WebSiteMetaDao dao = new WebSiteMetaDao();
+                List<WebSiteMeta> metaList = dao.findAll();
 
-            for (WebSiteMeta meta : metaList) {
-                w.write(KeyFactory.keyToString(meta.getKey()) + " " + meta.getUrlPattern() + "\n");
+                // 検索結果を出力する。
+                resp.setContentType("text/plain");
+                PrintWriter w = resp.getWriter();
+
+                for (WebSiteMeta meta : metaList) {
+                    w.write(KeyFactory.keyToString(meta.getKey()) + " " + meta.getUrlPattern() + "\n");
+                }
+
+                w.flush();
+            } else {
+                // メタ情報を取得する。
+                WebSiteMetaDao dao = new WebSiteMetaDao();
+                WebSiteMeta meta = dao.findById(id);
+
+                // 検索結果を出力する。
+                resp.setContentType("text/plain");
+                PrintWriter w = resp.getWriter();
+
+                if (meta != null) {
+                    w.write("id=" + KeyFactory.keyToString(meta.getKey()) + "\n");
+                    w.write("urlPattern=" + meta.getUrlPattern() + "\n");
+                    w.write("contentStartPattern=" + meta.getContentStartPattern() + "\n");
+                    w.write("contentEndPattern=" + meta.getContentEndPattern() + "\n");
+                    w.flush();
+                } else {
+                    resp.setStatus(404);
+                }
             }
-
-            w.flush();
         } catch (RuntimeException e) {
             LOG.log(Level.SEVERE, "error", e);
             resp.setStatus(500);
