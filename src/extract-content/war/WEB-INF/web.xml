@@ -29,9 +29,9 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
     </servlet>
     <servlet-mapping>
         <servlet-name>ApiKeyServlet</servlet-name>
-        <url-pattern>/api/apiKey</url-pattern>
+        <url-pattern>/auth/api/apiKey</url-pattern>
     </servlet-mapping>
-    
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
@@ -40,4 +40,13 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         <param-name>version</param-name>
         <param-value>20140925_0132</param-value>
     </context-param>
+
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/auth/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
 </web-app>
