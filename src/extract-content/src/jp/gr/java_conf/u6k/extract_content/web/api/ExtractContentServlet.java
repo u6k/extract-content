@@ -133,7 +133,7 @@ public class ExtractContentServlet extends HttpServlet {
 
             return;
         } catch (RuntimeException e) {
-            LOG.log(Level.WARNING, "error.", e);
+            LOG.log(Level.SEVERE, "error.", e);
             resp.setStatus(500);
             resp.setContentType("text/plain");
 

@@ -209,7 +209,7 @@ public class WebSiteMetaRepositoryServlet extends HttpServlet {
                 dao.close();
             }
         } catch (IllegalArgumentException | WebSiteMetaDuplicateException | WebSiteMetaNotFoundException e) {
-            LOG.log(Level.SEVERE, "meta update failure.", e);
+            LOG.log(Level.WARNING, "meta update failure.", e);
             resp.setStatus(400);
             resp.setContentType("text/plain");
 
