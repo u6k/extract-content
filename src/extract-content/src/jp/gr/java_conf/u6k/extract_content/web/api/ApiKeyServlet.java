@@ -34,8 +34,27 @@ public class ApiKeyServlet extends HttpServlet {
             PrintWriter w = resp.getWriter();
             w.write(apiKey);
             w.flush();
+        } catch (RuntimeException e) {
+            LOG.log(Level.SEVERE, "error.", e);
+            resp.setStatus(500);
+            resp.setContentType("text/plain");
 
-            return;
+            PrintWriter w = resp.getWriter();
+            w.write(e.toString());
+            w.flush();
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try {
+            // バージョンを出力する。
+            String version = getServletContext().getInitParameter("version");
+            resp.addHeader("X-Version", version);
+
+            // APIキーを更新する。
+            ApiKeyDao dao = new ApiKeyDao();
+            dao.refresh();
         } catch (RuntimeException e) {
             LOG.log(Level.SEVERE, "error.", e);
             resp.setStatus(500);
@@ -47,12 +66,6 @@ public class ApiKeyServlet extends HttpServlet {
 
             return;
         }
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
     }
 
 }
