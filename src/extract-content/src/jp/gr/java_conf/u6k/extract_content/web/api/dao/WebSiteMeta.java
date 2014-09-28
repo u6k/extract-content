@@ -16,11 +16,19 @@ public class WebSiteMeta {
     private Key key;
 
     @Persistent
+    private String wedataId;
+
+    @Persistent
     private String urlPattern;
 
     @Persistent
+    private String pageElement;
+
+    // TODO 削除する。
+    @Persistent
     private String contentStartPattern;
 
+    // TODO 削除する。
     @Persistent
     private String contentEndPattern;
 
@@ -59,6 +67,22 @@ public class WebSiteMeta {
 
     public void setContentEndPattern(String contentEndPattern) {
         this.contentEndPattern = contentEndPattern;
+    }
+
+    public String getWedataId() {
+        return wedataId;
+    }
+
+    public void setWedataId(String wedataId) {
+        this.wedataId = wedataId;
+    }
+
+    public String getPageElement() {
+        return pageElement;
+    }
+
+    public void setPageElement(String pageElement) {
+        this.pageElement = pageElement;
     }
 
 }
