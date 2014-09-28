@@ -41,7 +41,7 @@ public class ExtractContentServlet extends HttpServlet {
             PrintWriter w = resp.getWriter();
             w.write(content);
             w.flush();
-        } catch (PageRequestException | UrlNotMatchException | ContentExtractFailException e) {
+        } catch (IllegalArgumentException | PageRequestException | UrlNotMatchException | ContentExtractFailException e) {
             LOG.log(Level.WARNING, "warning", e);
 
             resp.setContentType("text/plain");

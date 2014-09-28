@@ -16,11 +16,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         <url-pattern>/api/extract</url-pattern>
     </servlet-mapping>
     <servlet>
-        <servlet-name>WebSiteMetaRepositoryServlet</servlet-name>
-        <servlet-class>jp.gr.java_conf.u6k.extract_content.web.api.WebSiteMetaRepositoryServlet</servlet-class>
+        <servlet-name>WebSiteMetaServlet</servlet-name>
+        <servlet-class>jp.gr.java_conf.u6k.extract_content.web.api.WebSiteMetaServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>WebSiteMetaRepositoryServlet</servlet-name>
+        <servlet-name>WebSiteMetaServlet</servlet-name>
         <url-pattern>/api/meta</url-pattern>
     </servlet-mapping>
     <servlet>

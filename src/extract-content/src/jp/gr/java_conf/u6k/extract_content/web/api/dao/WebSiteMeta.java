@@ -7,6 +7,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 
 @PersistenceCapable
 public class WebSiteMeta {
@@ -19,54 +20,18 @@ public class WebSiteMeta {
     private String wedataId;
 
     @Persistent
-    private String urlPattern;
+    private Text urlPattern;
 
     @Persistent
-    private String pageElement;
-
-    // TODO 削除する。
-    @Persistent
-    private String contentStartPattern;
-
-    // TODO 削除する。
-    @Persistent
-    private String contentEndPattern;
+    private Text pageElement;
 
     public WebSiteMeta() {
     }
 
-    public WebSiteMeta(String urlPattern, String contentStartPattern, String contentEndPattern) {
-        this.urlPattern = urlPattern;
-        this.contentStartPattern = contentStartPattern;
-        this.contentEndPattern = contentEndPattern;
-    }
-
-    public Key getKey() {
-        return key;
-    }
-
-    public String getUrlPattern() {
-        return urlPattern;
-    }
-
-    public void setUrlPattern(String urlPattern) {
-        this.urlPattern = urlPattern;
-    }
-
-    public String getContentStartPattern() {
-        return contentStartPattern;
-    }
-
-    public void setContentStartPattern(String contentStartPattern) {
-        this.contentStartPattern = contentStartPattern;
-    }
-
-    public String getContentEndPattern() {
-        return contentEndPattern;
-    }
-
-    public void setContentEndPattern(String contentEndPattern) {
-        this.contentEndPattern = contentEndPattern;
+    public WebSiteMeta(String wedataId, String urlPattern, String pageElement) {
+        this.wedataId = wedataId;
+        setUrlPattern(urlPattern);
+        setPageElement(pageElement);
     }
 
     public String getWedataId() {
@@ -77,12 +42,40 @@ public class WebSiteMeta {
         this.wedataId = wedataId;
     }
 
+    public String getUrlPattern() {
+        if (this.urlPattern != null) {
+            return this.urlPattern.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    public void setUrlPattern(String urlPattern) {
+        if (urlPattern != null) {
+            this.urlPattern = new Text(urlPattern);
+        } else {
+            this.urlPattern = null;
+        }
+    }
+
     public String getPageElement() {
-        return pageElement;
+        if (this.pageElement != null) {
+            return this.pageElement.getValue();
+        } else {
+            return null;
+        }
     }
 
     public void setPageElement(String pageElement) {
-        this.pageElement = pageElement;
+        if (pageElement != null) {
+            this.pageElement = new Text(pageElement);
+        } else {
+            this.pageElement = null;
+        }
+    }
+
+    public Key getKey() {
+        return key;
     }
 
 }

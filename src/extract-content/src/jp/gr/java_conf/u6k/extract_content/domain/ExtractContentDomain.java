@@ -4,6 +4,7 @@ package jp.gr.java_conf.u6k.extract_content.domain;
 import java.io.IOException;
 
 import jp.gr.java_conf.u6k.extract_content.web.api.dao.WebSiteMeta;
+import jp.gr.java_conf.u6k.extract_content.web.api.util.StringUtil;
 import jp.gr.java_conf.u6k.extract_content.web.exception.ContentExtractFailException;
 import jp.gr.java_conf.u6k.extract_content.web.exception.PageRequestException;
 import jp.gr.java_conf.u6k.extract_content.web.exception.UrlNotMatchException;
@@ -21,6 +22,8 @@ public class ExtractContentDomain {
      * @param url
      *            取得するWebページのURL。
      * @return Webページの本文部分のHTML。
+     * @throws IllegalArgumentException
+     *             url引数が空の場合。
      * @throws PageRequestException
      *             Webページを取得できなかった場合。
      * @throws UrlNotMatchException
@@ -29,6 +32,10 @@ public class ExtractContentDomain {
      *             Webページに本文部分が存在しない場合。
      */
     public String extract(String url) {
+        if (StringUtil.isNullOrEmpty(url)) {
+            throw new IllegalArgumentException("url is empty.");
+        }
+
         // HTMLを取得する。
         Document doc;
         try {
