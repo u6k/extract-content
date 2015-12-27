@@ -35,3 +35,7 @@
 * [SmartNewsがダメならなぜPocketもダメなのか](http://anond.hatelabo.jp/201212260100359)
 * [著作物の私的使用の場合](http://cozylaw.com/copy/tyosakuken/sitekisiyou.htm)
 * [著作物が自由に使える場合は？](http://www.cric.or.jp/qa/hajime/hajime7.html)
+
+## 課題管理
+
+https://myredmine-u6kapps.rhcloud.com/projects/extract-content
