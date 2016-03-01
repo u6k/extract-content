@@ -36,6 +36,8 @@
 * [著作物の私的使用の場合](http://cozylaw.com/copy/tyosakuken/sitekisiyou.htm)
 * [著作物が自由に使える場合は？](http://www.cric.or.jp/qa/hajime/hajime7.html)
 
-## 課題管理
+## 本文抽出について
 
-https://myredmine-u6kapps.rhcloud.com/projects/extract-content
+* [CRFを使ったWeb本文抽出](http://www.slideshare.net/shuyo/crf-web)
+* [Web本文抽出 using CRF](http://www.slideshare.net/shuyo/web-using-crf)
+* [Webページの本文抽出](http://labs.cybozu.co.jp/blog/nakatani/2007/09/web_1.html)
