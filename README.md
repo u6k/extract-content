@@ -1,6 +1,6 @@
 # extract-content
 
-![Badge Status](https://ci-as-a-service)
+[![CircleCI](https://circleci.com/gh/u6k/extract-content.svg?style=svg)](https://circleci.com/gh/u6k/extract-content)
 
 HTML文書の本文部分を抽出します。
 
@@ -46,7 +46,17 @@ $ curl -v \
 本文部分が返ります。
 
 ```
-TODO
+HTTP/1.0 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 18651
+Server: Werkzeug/0.12.1 Python/3.6.1
+Date: Tue, 25 Apr 2017 10:08:05 GMT
+
+<html><body><div><div class="text">
+                        <p>あらかじめ用意した次のようなテキストファイル（sample.txt）をPythonのプログラムから読み込む方法に ついて説明します。</p>
+(中略)
+* Closing connection 0
+                </div></body></html>
 ```
 
 アップロード方法が間違えている、何らかの理由で抽出に失敗したなどの場合、以下のようにエラーが返ります。
