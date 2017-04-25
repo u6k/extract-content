@@ -1,43 +1,100 @@
-# Webページ本文抽出アプリ
+# extract-content
 
-## 概要
+[![CircleCI](https://circleci.com/gh/u6k/extract-content.svg?style=svg)](https://circleci.com/gh/u6k/extract-content)
 
-特定サイトのページをキレイに取得して、ローカルに保存しておきたい。しかし、いちいち手動でトリミングを行うのは非常に面倒臭い。そこで、本文部分を抽出するアプリを作成する。
+HTML文書の本文部分を抽出します。
 
-## 機能
+## Description
 
-* 特定サイトにおける本文部分の開始・終了を登録する。
-* URLを投げると、本文部分を返す。
+ブログやニュースなどのHTML文書は、メニュー・広告など本文以外の様々な情報が含まれます。これら余計な情報を除去し、本文部分のHTMLだけを抽出します。本文抽出処理はWebAPIとして提供するため、どの処理系でも使用することができます。
 
-## 備考
+## Requirement
 
-* 機能は全て、WebAPIとして提供する。それを操作するWebページ、スマホアプリなどは後付で作成するかも。
-* とりあえず、リクエストはクエリ文字列、レスポンスはテキスト形式で返す。さっさと作りたいので。
-* ある程度カタチになったら、JAX-RS(REST)で作り直す。
-* 稼働環境はGoogleAppEngine(Java)。OpenShiftも考えたけど、他で稼働させるつもりは無い。
-* 文書、タスク、ソースコードはGitHubで管理する。
-  * あーでも、UML文書はどうしようかな…
+- Docker
 
-## 備考
+```
+$ docker version
+Client:
+ Version:      17.03.1-ce
+ API version:  1.27
+ Go version:   go1.7.5
+ Git commit:   c6d412e
+ Built:        Tue Mar 28 00:40:02 2017
+ OS/Arch:      windows/amd64
 
-* [Google App Engine 上で JAX-RS](http://d.hatena.ne.jp/winplus/20100215/1266236038)
+Server:
+ Version:      17.04.0-ce
+ API version:  1.28 (minimum version 1.12)
+ Go version:   go1.7.5
+ Git commit:   4845c56
+ Built:        Wed Apr  5 18:45:47 2017
+ OS/Arch:      linux/amd64
+ Experimental: false
+```
 
-## ePubについて参考
+## Usage
 
-* [webページは「dotEPUB」使ってePub保管する時代になる！？](http://ebookpro.jp/blog/epub/webdotepubepub.html)
-  * dotEPUBはWebAPIも提供している。
-* [電子書籍ファイルePubについて -ePubを自分で作成する-](http://naoki.sato.name/lab/archives/45)
-* [日本語Epubブックサンプル](http://www.kobu.com/docs/epub/index.htm)
-* [うわっ…あんたのEPUB、ダメすぎ…？ 検証とその対処](http://densho.hatenablog.com/entry/epubcheck)
+本文部分を抽出するには、以下のようにファイルをアップロードします。
 
-## 著作権法について参考
+```
+$ curl -v \
+    -X POST \
+    -F file=@/path/to/file \
+    http://localhost:5000/
+```
 
-* [SmartNewsがダメならなぜPocketもダメなのか](http://anond.hatelabo.jp/201212260100359)
-* [著作物の私的使用の場合](http://cozylaw.com/copy/tyosakuken/sitekisiyou.htm)
-* [著作物が自由に使える場合は？](http://www.cric.or.jp/qa/hajime/hajime7.html)
+本文部分が返ります。
 
-## 本文抽出について
+```
+HTTP/1.0 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 18651
+Server: Werkzeug/0.12.1 Python/3.6.1
+Date: Tue, 25 Apr 2017 10:08:05 GMT
 
-* [CRFを使ったWeb本文抽出](http://www.slideshare.net/shuyo/crf-web)
-* [Web本文抽出 using CRF](http://www.slideshare.net/shuyo/web-using-crf)
-* [Webページの本文抽出](http://labs.cybozu.co.jp/blog/nakatani/2007/09/web_1.html)
+<html><body><div><div class="text">
+                        <p>あらかじめ用意した次のようなテキストファイル（sample.txt）をPythonのプログラムから読み込む方法に ついて説明します。</p>
+(中略)
+* Closing connection 0
+                </div></body></html>
+```
+
+アップロード方法が間違えている、何らかの理由で抽出に失敗したなどの場合、以下のようにエラーが返ります。
+
+```
+HTTP/1.0 400 BAD REQUEST
+Content-Type: text/html; charset=utf-8
+Content-Length: 12
+Server: Werkzeug/0.12.1 Python/3.6.1
+Date: Tue, 25 Apr 2017 08:27:30 GMT
+
+no file part
+```
+
+## Installation
+
+Dockerイメージをビルドします。
+
+```
+$ docker build -t u6kapps/extract-content .
+```
+
+Dockerコンテナを起動します。
+
+```
+$ docker run \
+    -d \
+    --name extract-content \
+    -p 5000:5000 \
+    u6kapps/extract-content
+```
+
+## Author
+
+- [u6k/extract-content](https://github.com/u6k/extract-content)
+- [extract-content - u6k.Redmine](https://redmine.u6k.me/projects/extract-content)
+- [u6k.Blog](https://blog.u6k.me/)
+
+## License
+
+[MIT License](https://github.com/u6k/extract-content/blob/master/LICENSE)

@@ -1,0 +1,20 @@
+machine:
+    timezone: Asia/Tokyo
+    services:
+        - docker
+
+compile:
+    override:
+        - docker build -t u6kapps/extract-content .
+
+test:
+    override:
+        - /bin/true
+
+deployment:
+    release:
+        tag: /.+/
+        commands:
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            - docker tag u6kapps/extract-content u6kapps/extract-content:$CIRCLE_TAG
+            - docker push u6kapps/extract-content
