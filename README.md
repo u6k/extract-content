@@ -52,7 +52,13 @@ TODO
 アップロード方法が間違えている、何らかの理由で抽出に失敗したなどの場合、以下のようにエラーが返ります。
 
 ```
-TODO
+HTTP/1.0 400 BAD REQUEST
+Content-Type: text/html; charset=utf-8
+Content-Length: 12
+Server: Werkzeug/0.12.1 Python/3.6.1
+Date: Tue, 25 Apr 2017 08:27:30 GMT
+
+no file part
 ```
 
 ## Installation
