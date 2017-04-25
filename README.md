@@ -1,6 +1,6 @@
 # extract-content
 
-![Badge Status](https://ci-as-a-service)
+[![CircleCI](https://circleci.com/gh/u6k/extract-content.svg?style=svg)](https://circleci.com/gh/u6k/extract-content)
 
 HTML文書の本文部分を抽出します。
 
