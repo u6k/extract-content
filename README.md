@@ -1,6 +1,9 @@
 # extract-content
 
-[![CircleCI](https://circleci.com/gh/u6k/extract-content.svg?style=svg)](https://circleci.com/gh/u6k/extract-content)
+[![CircleCI](https://img.shields.io/circleci/project/github/u6k/extract-content.svg)](https://circleci.com/gh/u6k/extract-content)
+[![license](https://img.shields.io/github/license/u6k/extract-content.svg)](https://github.com/u6k/extract-content/blob/master/LICENSE)
+[![GitHub release](https://img.shields.io/github/release/u6k/extract-content.svg)](https://github.com/u6k/extract-content/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/u6kapps/extract-content.svg)](https://hub.docker.com/r/u6kapps/extract-content/)
 
 HTML文書の本文部分を抽出します。
 
