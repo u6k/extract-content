@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: "extract-content"
+  description: "HTML文書の本文部分を抽出します。"
+  version: 2.0.0
+  contact:
+    url: "https://github.com/u6k"
+  license:
+    name: "MIT License"
+    url: "https://github.com/u6k/extract-content/blob/master/LICENSE"
+paths:
+  /extract:
+    get:
+      summary: "URLのHTML文書から本文部分を抽出します。"
+      parameters:
+        - name: "url"
+          in: query
+          description: "HTML文書のURL"
+          required: true
+          schema:
+            type: string
+            example: "https%3a%2f%2fgithub%2ecom%2fu6k%2fextract%2dcontent"
+      responses:
+        200:
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+                    description: "HTML文書のURL"
+                    example: "https://github.com/u6k/extract-content"
+                  full-content:
+                    type: string
+                    description: "HTML文書の全文"
+                    example: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n...(中略)...\n</body>\n</html>"
+                  title:
+                    type: string
+                    description: "HTML文書のタイトル"
+                    example: "u6k/extract-content: Webページの本文部分を抽出します。"
+                  content:
+                    type: string
+                    description: "HTML文書から抽出した本文部分"
+                    example: "<h1>extract-content</h1>\n<p>HTML文書の本文部分を抽出します。</p>\n...(中略)...\n<h2>License</h2>\n<a href=\"https://github.com/u6k/extract-content/blob/master/LICENSE\">MIT License</a>"
+        400:
+          description: "パラメータが不正な場合"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInfo"
+        500:
+          description: |
+            - URLのデータが取得できない場合
+            - URLのデータがHTML文書ではない場合
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorInfo"
+components:
+  schemas:
+    ErrorInfo:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: integer
+              description: "エラーコード"
+              example: 12345
+            message:
+              type: string
+              description: "エラーメッセージ"
+              example: "Invalid URL"

@@ -37,6 +37,8 @@ Server:
 
 ## Usage
 
+### 本文抽出
+
 本文部分を抽出するには、以下のようにファイルをアップロードします。
 
 ```
@@ -73,6 +75,20 @@ Date: Tue, 25 Apr 2017 08:27:30 GMT
 
 no file part
 ```
+
+### Swaggerドキュメントを参照
+
+Swaggerドキュメントを参照するには、swagger-uiコンテナを起動します。
+
+```
+docker run \
+    -d \
+    -e "SWAGGER_JSON=/opt/swagger.yaml" \
+    -v ${PWD}/src/doc:/opt \
+    swaggerapi/swagger-ui
+```
+
+TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュメントを読み込めないもよう。対応されたら、ビルド・プロセスで静的ファイルを出力するようにします。
 
 ## Installation
 
