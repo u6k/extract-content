@@ -67,7 +67,7 @@ JSONが返ります。
 Swaggerドキュメントを参照するには、swagger-uiコンテナを起動します。
 
 ```
-docker run \
+$ docker run \
     -d \
     -e "SWAGGER_JSON=/opt/swagger.yaml" \
     -v ${PWD}/src/doc:/opt \
@@ -82,7 +82,6 @@ TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュ�
 
 ```
 $ docker run \
-    -d \
     --name extract-content \
     -p 5000:5000 \
     u6kapps/extract-content
@@ -105,7 +104,7 @@ TODO
 実行用Dockerイメージをビルドします。
 
 ```
-docker build -t u6kapps/extract-content .
+$ docker build -t u6kapps/extract-content .
 ```
 
 ## Author
