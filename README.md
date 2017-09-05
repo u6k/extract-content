@@ -39,41 +39,27 @@ Server:
 
 ### 本文抽出
 
-本文部分を抽出するには、以下のようにファイルをアップロードします。
+urlパラメータに、本文部分を抽出したいURLを指定します。
 
 ```
-$ curl -v \
-    -X POST \
-    -F file=@/path/to/file \
-    http://localhost:5000/
+$ curl -v "http://localhost:5000/extract?url=http%3a%2f%2fjp%2etechcrunch%2ecom%2f2017%2f08%2f31%2f20170826this-vr-cycle-is-dead%2f"
 ```
 
-本文部分が返ります。
+JSONが返ります。
 
 ```
-HTTP/1.0 200 OK
-Content-Type: text/html; charset=utf-8
-Content-Length: 18651
-Server: Werkzeug/0.12.1 Python/3.6.1
-Date: Tue, 25 Apr 2017 10:08:05 GMT
-
-<html><body><div><div class="text">
-                        <p>あらかじめ用意した次のようなテキストファイル（sample.txt）をPythonのプログラムから読み込む方法に ついて説明します。</p>
-(中略)
-* Closing connection 0
-                </div></body></html>
-```
-
-アップロード方法が間違えている、何らかの理由で抽出に失敗したなどの場合、以下のようにエラーが返ります。
-
-```
-HTTP/1.0 400 BAD REQUEST
-Content-Type: text/html; charset=utf-8
-Content-Length: 12
-Server: Werkzeug/0.12.1 Python/3.6.1
-Date: Tue, 25 Apr 2017 08:27:30 GMT
-
-no file part
+< HTTP/1.0 200 OK
+< Content-Type: application/json
+< Content-Length: 280396
+< Server: Werkzeug/0.12.2 Python/3.6.2
+< Date: Tue, 05 Sep 2017 07:19:56 GMT
+<
+{
+	"content": "<html><body><div><div class=\"article-entry text\" ...(中略)...</body></html>",
+	"full-content": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" ...(中略)...expires in 77 seconds\n-->\n",
+	"title": "VR\u306e\u4eca\u56de\u306e\u30cf\u30a4\u30d7\u30fb\u30b5\u30a4\u30af\u30eb\u306f\u7d42\u308f\u3063\u305f | TechCrunch Japan",
+	"url": "http://jp.techcrunch.com/2017/08/31/20170826this-vr-cycle-is-dead/"
+}
 ```
 
 ### Swaggerドキュメントを参照
@@ -92,13 +78,7 @@ TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュ�
 
 ## Installation
 
-Dockerイメージをビルドします。
-
-```
-$ docker build -t u6kapps/extract-content .
-```
-
-Dockerコンテナを起動します。
+実行用Dockerコンテナを起動します。
 
 ```
 $ docker run \
@@ -106,6 +86,26 @@ $ docker run \
     --name extract-content \
     -p 5000:5000 \
     u6kapps/extract-content
+```
+
+## Development
+
+### 開発環境を構築
+
+開発用Dockerイメージをビルドします。
+
+TODO
+
+開発用Dockerコンテナを起動します。
+
+TODO
+
+### ビルド
+
+実行用Dockerイメージをビルドします。
+
+```
+docker build -t u6kapps/extract-content .
 ```
 
 ## Author
