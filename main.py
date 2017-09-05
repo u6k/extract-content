@@ -7,22 +7,9 @@ logger.addHandler(handler)
 
 from flask import Flask, request, jsonify
 from readability import Document
-import requests
-from html.parser import HTMLParser
+import requests, bs4
 
 app = Flask(__name__)
-
-class ExtractHTMLParser(HTMLParser):
-    def handle_starttag(self, tag, attrs):
-        logger.debug("starttag: %s", tag)
-        for attr in attrs:
-            logger.debug("        attr: %s", attr)
-
-    def handle_endtag(self, tag):
-        logger.debug("endtag  : %s", tag)
-
-    def handle_data(self, data):
-        logger.debug("data    : %s", data)
 
 @app.route("/extract", methods=['GET'])
 def extract_content():
@@ -38,17 +25,26 @@ def extract_content():
     summary = doc.summary()
     title = doc.short_title()
 
-    parser = ExtractHTMLParser()
-    parser.feed(r.text)
+    soup = bs4.BeautifulSoup(summary, "lxml")
+    parse_element(soup.find("body"), 0)
 
     result = {
         "url": url,
-        "full-content": r.text,
         "title": title,
-        "content": summary
+        "full-content": r.text,
+        "content": summary,
+        "simplified-content": soup.prettify()
     }
 
     return jsonify(result)
+
+def parse_element(element, indent):
+    if isinstance(element, bs4.element.Tag):
+        logger.debug("  " * indent + "%s %s", type(element), element.name)
+        for content in element.contents:
+            parse_element(content, indent + 1)
+    else:
+        logger.debug("  " * indent + "%s %s", type(element), repr(element))
 
 if __name__ == "__main__":
     app.debug = True
