@@ -24,7 +24,7 @@ paths:
         200:
           description: "OK"
           content:
-            'application/json':
+            application/json:
               schema:
                 type: object
                 properties:
@@ -32,18 +32,22 @@ paths:
                     type: string
                     description: "HTML文書のURL"
                     example: "https://github.com/u6k/extract-content"
-                  full-content:
-                    type: string
-                    description: "HTML文書の全文"
-                    example: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n...(中略)...\n</body>\n</html>"
                   title:
                     type: string
                     description: "HTML文書のタイトル"
                     example: "u6k/extract-content: Webページの本文部分を抽出します。"
+                  full-content:
+                    type: string
+                    description: "HTML文書の全文"
+                    example: "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n...(中略)...\n</body>\n</html>"
                   content:
                     type: string
                     description: "HTML文書から抽出した本文部分"
-                    example: "<h1>extract-content</h1>\n<p>HTML文書の本文部分を抽出します。</p>\n...(中略)...\n<h2>License</h2>\n<a href=\"https://github.com/u6k/extract-content/blob/master/LICENSE\">MIT License</a>"
+                    example: "<html><body><h1>extract-content</h1>\n<p>HTML文書の本文部分を抽出します。</p>\n...(中略)...\n<h2>License</h2>\n<a href=\"https://github.com/u6k/extract-content/blob/master/LICENSE\">MIT License</a></body></html>"
+                  simplified-content:
+                    type: string
+                    description: "本文部分から余分な修飾を除去した、簡略化した本文"
+                    example: "<h1>extract-content</h1><p>HTML文書の本文部分を抽出します。</p>...(中略)...<a href=\"https://github.com/u6k/extract-content/blob/master/LICENSE\">MIT License</a>"
         400:
           description: "パラメータが不正な場合"
           content:

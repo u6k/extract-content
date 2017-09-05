@@ -62,20 +62,6 @@ JSONが返ります。
 }
 ```
 
-### Swaggerドキュメントを参照
-
-Swaggerドキュメントを参照するには、swagger-uiコンテナを起動します。
-
-```
-$ docker run \
-    -d \
-    -e "SWAGGER_JSON=/opt/swagger.yaml" \
-    -v ${PWD}/src/doc:/opt \
-    swaggerapi/swagger-ui
-```
-
-TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュメントを読み込めないもよう。対応されたら、ビルド・プロセスで静的ファイルを出力するようにします。
-
 ## Installation
 
 実行用Dockerコンテナを起動します。
@@ -114,6 +100,21 @@ $ docker run \
 ```
 $ python main.py
 ```
+
+### Swaggerドキュメントを参照
+
+Swaggerドキュメントを参照するには、swagger-uiコンテナを起動します。
+
+```
+$ docker run \
+    --rm \
+    -p 8080:8080 \
+    -e "SWAGGER_JSON=/opt/swagger.yaml" \
+    -v ${PWD}:/opt \
+    swaggerapi/swagger-ui
+```
+
+TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュメントを読み込めないもよう。対応されたら、ビルド・プロセスで静的ファイルを出力するようにします。
 
 ### ビルド
 
