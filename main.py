@@ -8,7 +8,21 @@ logger.addHandler(handler)
 from flask import Flask, request, jsonify
 from readability import Document
 import requests
+from html.parser import HTMLParser
+
 app = Flask(__name__)
+
+class ExtractHTMLParser(HTMLParser):
+    def handle_starttag(self, tag, attrs):
+        logger.debug("starttag: %s", tag)
+        for attr in attrs:
+            logger.debug("        attr: %s", attr)
+
+    def handle_endtag(self, tag):
+        logger.debug("endtag  : %s", tag)
+
+    def handle_data(self, data):
+        logger.debug("data    : %s", data)
 
 @app.route("/extract", methods=['GET'])
 def extract_content():
@@ -23,6 +37,9 @@ def extract_content():
     doc = Document(r.text)
     summary = doc.summary()
     title = doc.short_title()
+
+    parser = ExtractHTMLParser()
+    parser.feed(r.text)
 
     result = {
         "url": url,
