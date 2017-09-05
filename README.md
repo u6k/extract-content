@@ -93,11 +93,27 @@ $ docker run \
 
 開発用Dockerイメージをビルドします。
 
-TODO
+```
+$ docker build -t extract-content-dev -f Dockerfile-dev .
+```
 
 開発用Dockerコンテナを起動します。
 
-TODO
+```
+$ docker run \
+    -it \
+    --rm \
+    --name extract-content-dev \
+    -p 5000:5000 \
+    -v ${PWD}:/opt/extract-content \
+    extract-content-dev
+```
+
+`main.py`を実行します。
+
+```
+$ python main.py
+```
 
 ### ビルド
 
