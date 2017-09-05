@@ -1,7 +1,7 @@
 FROM python
 MAINTAINER u6k.apps@gmail.com
 
-RUN pip install Flask readability-lxml requests
+RUN pip install Flask lxml readability-lxml requests beautifulsoup4
 
 RUN mkdir -p /opt/extract-content/
 WORKDIR /opt/extract-content/
