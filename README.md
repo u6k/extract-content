@@ -68,6 +68,7 @@ JSONが返ります。
 
 ```
 $ docker run \
+    -d \
     --name extract-content \
     -p 5000:5000 \
     u6kapps/extract-content
