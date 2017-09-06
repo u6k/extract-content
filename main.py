@@ -7,7 +7,7 @@ logger.addHandler(handler)
 
 from flask import Flask, request, jsonify
 from readability import Document
-import requests, bs4
+import requests, bs4, pypandoc, codecs
 
 app = Flask(__name__)
 
@@ -21,30 +21,21 @@ def extract_content():
     logger.debug("status_code=%s", r.status_code)
     logger.debug("content_type=%s", r.headers["content-type"])
 
-    doc = Document(r.text)
-    summary = doc.summary()
+    full_content = r.text
+    doc = Document(full_content)
+    content = doc.summary()
     title = doc.short_title()
-
-    soup = bs4.BeautifulSoup(summary, "lxml")
-    parse_element(soup.find("body"), 0)
+    markdown_content = pypandoc.convert_text(content, "md", format="html", extra_args=["--normalize", "--no-wrap"])
 
     result = {
         "url": url,
         "title": title,
-        "full-content": r.text,
-        "content": summary,
-        "simplified-content": soup.prettify()
+        "full-content": full_content,
+        "content": content,
+        "markdown-content": markdown_content
     }
 
     return jsonify(result)
-
-def parse_element(element, indent):
-    if isinstance(element, bs4.element.Tag):
-        logger.debug("  " * indent + "%s %s", type(element), element.name)
-        for content in element.contents:
-            parse_element(content, indent + 1)
-    else:
-        logger.debug("  " * indent + "%s %s", type(element), repr(element))
 
 if __name__ == "__main__":
     app.debug = True
