@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Extract Content Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo=" crossorigin="anonymous" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        td.hljs-ln-numbers {
+            text-align: center;
+            color: #ccc;
+            border-right: 1px solid #999;
+            vertical-align: top;
+            padding-right: 5px;
+
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        td.hljs-ln-code {
+            padding-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/static/demo.html">Extract Content Demo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/u6k/extract-content/"><i class="fa fa-github fa-lg"></i> GitHub</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/u6k_yu1"><i class="fa fa-twitter fa-lg"></i> Twitter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/yuuichi.naono"><i class="fa fa-facebook fa-lg"></i> Facebook</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://blog.u6k.me/"><i class="fa fa-book fa-lg"></i> u6k.Blog()</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://qiita.com/u6k"><i class="fa fa-folder-open fa-lg"></i> Qiita</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Extract Content Demo</h1>
+        <p>このサイトでは、Extract Contentの動作を確認することができます。下にあるURLボックスに本文抽出をしたいURLを入力して、Submitボタンをクリックしてください。処理結果が表示されます。</p>
+
+        <form>
+            <div class="form-group">
+                <label for="url">URL</label>
+                <input type="text" class="form-control" id="url" placeholder="https://blog.u6k.me/2017/09/04/toc-of-hype-cycle-for-application-development-2017.html">
+            </div>
+            <button id="submit" type="button" class="btn btn-primary">Submit</button>
+        </form>
+
+        <hr />
+
+        <h2>Extract Contentとは</h2>
+        <p>
+            <a href="https://circleci.com/gh/u6k/extract-content"><img src="https://img.shields.io/circleci/project/github/u6k/extract-content.svg" alt="CircleCI" /></a>
+            <a href="https://github.com/u6k/extract-content/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/extract-content.svg" alt="license" /></a>
+            <a href="https://github.com/u6k/extract-content/releases"><img src="https://img.shields.io/github/release/u6k/extract-content.svg" alt="GitHub release" /></a>
+            <a href="https://hub.docker.com/r/u6kapps/extract-content/"><img src="https://img.shields.io/docker/pulls/u6kapps/extract-content.svg" alt="Docker Pulls" /></a>
+        </p>
+        <p>URLを指定して、Webページの本文部分を抽出したり要約したりするWebAPIです。詳細は<a href="https://github.com/u6k/extract-content">u6k/extract-content - GitHub</a>をご覧ください。</p>
+
+        <hr />
+
+        <h2>Result - JSON</h2>
+        <!-- TODO
+        <p>このJSONは、<a href="http://example.com/extract?url=xxx">http://example.com/extract?url=xxx</a>にアクセスすることで取得できます。</p>
+        -->
+        <pre><code id="result_json" class="json"></code></pre>
+
+        <hr />
+
+        <h2>Result - Markdown</h2>
+        <pre><code id="result_markdown" class="markdown"></code></pre>
+
+        <h2>Result - Content</h2>
+        <div id="result_content"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.js" integrity="sha256-JpPHcp4DGec4irAB1wv46K9l/yzUEiCsErdUe+hVmfE=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/markdown.min.js" integrity="sha256-QisUfMmh1ba2V0Kn8uxkMS1ShgsY1LyhrVNmit2llf4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js" integrity="sha256-KPdGtw3AdDen/v6+9ue/V3m+9C2lpNiuirroLsHrJZM=" crossorigin="anonymous"></script>
+    <script src="./highlightjs-line-numbers.min.js"></script>
+    <script>
+        $(function () {
+            $("#submit").on("click", function () {
+                $.ajax("/extract",
+                    {
+                        type: "get",
+                        data: {
+                            url: $("#url").val()
+                        },
+                        cache: false
+                    }
+                ).done(function (data) {
+                    console.log(data);
+                    console.log(data["markdown_content"]);
+                    $("#result_json").empty();
+                    $("#result_json").text(JSON.stringify(data, null, 2));
+                    $("#result_markdown").empty();
+                    $("#result_markdown").text(data["markdown-content"]);
+                    $("#result_content").empty();
+                    $("#result_content").append(marked(data["markdown-content"]));
+
+                    $("#result_json").each(function (i, block) {
+                        hljs.highlightBlock(block);
+                        hljs.lineNumbersBlock(block);
+                    });
+                    $("#result_markdown").each(function (i, block) {
+                        hljs.highlightBlock(block);
+                        hljs.lineNumbersBlock(block);
+                    });
+                });
+            });
+        });
+
+        var escapeHtml = (function (String) {
+            var escapeMap = {
+                '&': '&amp;',
+                "'": '&#x27;',
+                '`': '&#x60;',
+                '"': '&quot;',
+                '<': '&lt;',
+                '>': '&gt;'
+            };
+            var escapeReg = '[';
+            var reg;
+            for (var p in escapeMap) {
+                if (escapeMap.hasOwnProperty(p)) {
+                    escapeReg += p;
+                }
+            }
+            escapeReg += ']';
+            reg = new RegExp(escapeReg, 'g');
+
+            return function escapeHtml(str) {
+                str = (str === null || str === undefined) ? '' : '' + str;
+                return str.replace(reg, function (match) {
+                    return escapeMap[match];
+                });
+            };
+        }(String));
+    </script>
+</body>
+
+</html>

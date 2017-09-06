@@ -5,11 +5,15 @@ handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect
 from readability import Document
 import requests, bs4, pypandoc, codecs
 
 app = Flask(__name__)
+
+@app.route("/")
+def index():
+    return redirect("/static/demo.html", code=302)
 
 @app.route("/extract", methods=['GET'])
 def extract_content():
