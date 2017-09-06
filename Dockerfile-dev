@@ -7,10 +7,9 @@ RUN apt-get update && \
 
 RUN pip install Flask lxml readability-lxml requests beautifulsoup4 pypandoc
 
-RUN mkdir -p /opt/extract-content/
+VOLUME /opt/extract-content/
 WORKDIR /opt/extract-content/
-COPY main.py .
 
 EXPOSE 5000
 
-CMD ["python", "/opt/extract-content/main.py"]
+CMD ["python", "main.py"]

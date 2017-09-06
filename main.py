@@ -5,41 +5,38 @@ handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from readability import Document
-from tempfile import mkstemp
+import requests, bs4, pypandoc, codecs
+
 app = Flask(__name__)
 
-@app.route("/", methods=['POST'])
+@app.route("/extract", methods=['GET'])
 def extract_content():
     logger.info("#extract_content start.")
-    if 'file' not in request.files:
-        raise BadRequestException("no file part")
+    url = request.args.get("url")
+    logger.info("url=%s", url)
 
-    tmp_file = mkstemp()
-    logger.debug("tmp_file=%s", tmp_file)
-    request.files['file'].save(tmp_file[1])
+    r = requests.get(url)
+    logger.debug("status_code=%s", r.status_code)
+    logger.debug("content_type=%s", r.headers["content-type"])
 
-    tmp_file_obj = open(tmp_file[1])
-    data = tmp_file_obj.read()
-    logger.debug("tmp_file_obj.size=%s", len(data))
-    tmp_file_obj.close()
+    full_content = r.text
+    doc = Document(full_content)
+    content = doc.summary()
+    title = doc.short_title()
+    markdown_content = pypandoc.convert_text(content, "md", format="html", extra_args=["--normalize", "--no-wrap"])
 
-    doc = Document(data)
-    summary = doc.summary()
+    result = {
+        "url": url,
+        "title": title,
+        "full-content": full_content,
+        "content": content,
+        "markdown-content": markdown_content
+    }
 
-    return summary
-
-class BadRequestException(Exception):
-    status_code = 400
-
-    def __init__(self, message):
-        Exception.__init__(self)
-        self.message = message
-
-@app.errorhandler(BadRequestException)
-def handle_bad_request(e):
-    return e.message, e.status_code
+    return jsonify(result)
 
 if __name__ == "__main__":
-    app.run()
+    app.debug = True
+    app.run(host='0.0.0.0')
