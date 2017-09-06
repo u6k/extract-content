@@ -12,4 +12,4 @@ WORKDIR /opt/extract-content/
 
 EXPOSE 5000
 
-CMD ["bash"]
+CMD ["python", "main.py"]
