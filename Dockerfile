@@ -10,7 +10,7 @@ RUN pip install Flask lxml readability-lxml requests beautifulsoup4 pypandoc
 RUN mkdir -p /opt/extract-content/
 WORKDIR /opt/extract-content/
 COPY main.py .
-COPY static/ .
+COPY static/ static/
 
 EXPOSE 5000
 
