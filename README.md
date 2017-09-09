@@ -13,8 +13,6 @@ HTML文書の本文部分を抽出します。
 
 ## Requirement
 
-Dockerを使用する場合、Docker以外の必要なソフトウェアはビルド時にインストールされます。
-
 - Docker
 
 ```
@@ -35,38 +33,6 @@ Server:
  Built:        Wed Apr  5 18:45:47 2017
  OS/Arch:      linux/amd64
  Experimental: false
-```
-
-- Python 3.x
-
-```
-$ python --version
-Python 3.6.2
-```
-
-- Pandoc
-
-```
-# pandoc --version
-pandoc 1.12.4.2
-Compiled with texmath 0.6.6.1, highlighting-kate 0.5.8.5.
-Syntax highlighting is supported for the following languages:
-    actionscript, ada, apache, asn1, asp, awk, bash, bibtex, boo, c, changelog,
-    clojure, cmake, coffee, coldfusion, commonlisp, cpp, cs, css, curry, d,
-    diff, djangotemplate, doxygen, doxygenlua, dtd, eiffel, email, erlang,
-    fortran, fsharp, gcc, gnuassembler, go, haskell, haxe, html, ini, isocpp,
-    java, javadoc, javascript, json, jsp, julia, latex, lex, literatecurry,
-    literatehaskell, lua, makefile, mandoc, markdown, matlab, maxima, metafont,
-    mips, modelines, modula2, modula3, monobasic, nasm, noweb, objectivec,
-    objectivecpp, ocaml, octave, pascal, perl, php, pike, postscript, prolog,
-    pure, python, r, relaxngcompact, restructuredtext, rhtml, roff, ruby, rust,
-    scala, scheme, sci, sed, sgml, sql, sqlmysql, sqlpostgresql, tcl, texinfo,
-    verilog, vhdl, xml, xorg, xslt, xul, yacc, yaml
-Default user data directory: /root/.pandoc
-Copyright (C) 2006-2014 John MacFarlane
-Web:  http://johnmacfarlane.net/pandoc
-This is free software; see the source for copying conditions.  There is no
-warranty, not even for merchantability or fitness for a particular purpose.
 ```
 
 ## Usage
@@ -104,8 +70,6 @@ JSONが返ります。
 
 ## Installation
 
-### for Docker
-
 実行用Dockerコンテナを起動します。
 
 ```
@@ -116,19 +80,9 @@ $ docker run \
     u6kapps/extract-content
 ```
 
-### for Python
-
-`main.py`を実行します。
-
-```
-$ python main.py
-```
-
 ## Development
 
 ### 開発環境を構築
-
-#### for Docker
 
 開発用Dockerイメージをビルドします。
 
@@ -145,20 +99,6 @@ $ docker run \
     -p 5000:5000 \
     -v ${PWD}:/opt/extract-content \
     extract-content-dev
-```
-
-#### for Python
-
-Pandocをインストールします。
-
-```
-$ apt-get install -y pandoc
-```
-
-Pythonライブラリをインストールします。
-
-```
-$ pip install Flask lxml readability-lxml requests beautifulsoup4 pypandoc
 ```
 
 ### Swaggerドキュメントを参照
@@ -178,17 +118,11 @@ TODO: 2017/9/4時点のswagger-codegenは、`openapi 3.0.0`のSwaggerドキュ�
 
 ### ビルド
 
-#### for Docker
-
 実行用Dockerイメージをビルドします。
 
 ```
 $ docker build -t u6kapps/extract-content .
 ```
-
-#### for Python
-
-Python環境の場合、ビルドは必要ありません。
 
 ## Author
 
