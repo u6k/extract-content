@@ -5,9 +5,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Extract Content Demo</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo=" crossorigin="anonymous" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo="
+        crossorigin="anonymous" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
+        crossorigin="anonymous">
     <style>
         body {
             padding-top: 70px;
@@ -41,7 +44,8 @@
 <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/static/demo.html">Extract Content Demo</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
@@ -71,7 +75,7 @@
         <form>
             <div class="form-group">
                 <label for="url">URL</label>
-                <input type="text" class="form-control" id="url" placeholder="https://blog.u6k.me/2017/09/04/toc-of-hype-cycle-for-application-development-2017.html">
+                <input type="text" class="form-control" id="url" placeholder="http://jp.techcrunch.com/2017/08/30/20170829a-preview-of-the-first-wave-of-ar-apps-coming-to-iphones/">
             </div>
             <button id="submit" type="button" class="btn btn-primary">Submit</button>
         </form>
@@ -97,8 +101,8 @@
 
         <hr />
 
-        <h2>Result - Markdown</h2>
-        <pre><code id="result_markdown" class="markdown"></code></pre>
+        <h2>Result - Summary</h2>
+        <ul id="result_summary"></ul>
 
         <h2>Result - Content</h2>
         <div id="result_content"></div>
@@ -109,7 +113,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.js" integrity="sha256-JpPHcp4DGec4irAB1wv46K9l/yzUEiCsErdUe+hVmfE=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/markdown.min.js" integrity="sha256-QisUfMmh1ba2V0Kn8uxkMS1ShgsY1LyhrVNmit2llf4=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js" integrity="sha256-KPdGtw3AdDen/v6+9ue/V3m+9C2lpNiuirroLsHrJZM=" crossorigin="anonymous"></script>
     <script src="./highlightjs-line-numbers.min.js"></script>
     <script>
@@ -125,19 +128,16 @@
                     }
                 ).done(function (data) {
                     console.log(data);
-                    console.log(data["markdown_content"]);
                     $("#result_json").empty();
                     $("#result_json").text(JSON.stringify(data, null, 2));
-                    $("#result_markdown").empty();
-                    $("#result_markdown").text(data["markdown-content"]);
+                    $("#result_summary").empty();
+                    data["summary-list"].forEach(function (value) {
+                        $("#result_summary").append("<li>" + value + "</li>");
+                    });
                     $("#result_content").empty();
                     $("#result_content").append(marked(data["markdown-content"]));
 
                     $("#result_json").each(function (i, block) {
-                        hljs.highlightBlock(block);
-                        hljs.lineNumbersBlock(block);
-                    });
-                    $("#result_markdown").each(function (i, block) {
                         hljs.highlightBlock(block);
                         hljs.lineNumbersBlock(block);
                     });
