@@ -7,7 +7,10 @@ logger.addHandler(handler)
 
 from flask import Flask, request, jsonify, redirect
 from readability import Document
-import requests, bs4, pypandoc, codecs
+import requests
+import pypandoc
+import codecs
+from auto_abstracts.auto_abstractor import AutoAbstractor, AbstractableTopNRank
 
 app = Flask(__name__)
 
@@ -31,12 +34,19 @@ def extract_content():
     title = doc.short_title()
     markdown_content = pypandoc.convert_text(content, "md", format="html", extra_args=["--normalize", "--no-wrap"])
 
+    auto_abstractor = AutoAbstractor()
+    abstractable_doc = AbstractableTopNRank()
+    abstractable_doc.set_top_n(3)
+    summary_list = auto_abstractor.summarize(markdown_content, abstractable_doc)["summarize_result"]
+    summary_list = [summary.strip() for summary in summary_list]
+
     result = {
         "url": url,
         "title": title,
         "full-content": full_content,
         "content": content,
-        "markdown-content": markdown_content
+        "markdown-content": markdown_content,
+        "summary-list": summary_list
     }
 
     return jsonify(result)
