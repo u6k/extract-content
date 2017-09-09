@@ -48,6 +48,11 @@ paths:
                     type: string
                     description: "本文部分のMarkdown文書"
                     example: "# extract-content\nHTML文書の本文部分を抽出します。...(中略)...[MIT License](https://github.com/u6k/extract-content/blob/master/LICENSE)"
+                  summary-list:
+                    type: array
+                    items:
+                      type: string
+                      example: ["ブログやニュースなどのHTML文書は、メニュー・広告など本文以外の様々な情報が含まれます。", "これら余計な情報を除去し、本文部分のHTMLだけを抽出します。", "本文抽出処理はWebAPIとして提供するため、どの処理系でも使用することができます。"]
         400:
           description: "パラメータが不正な場合"
           content:
