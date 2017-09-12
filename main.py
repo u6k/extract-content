@@ -13,10 +13,23 @@ import codecs
 from auto_abstracts.auto_abstractor import AutoAbstractor, AbstractableTopNRank
 
 app = Flask(__name__)
+app.config.from_object("settings")
 
 @app.route("/")
 def index():
     return redirect("/static/demo.html", code=302)
+
+@app.route("/info", methods=['GET'])
+def info():
+    logger.info("#info start.")
+
+    result = {
+        "version": app.config["VERSION"]
+    }
+
+    resp = jsonify(result)
+    resp.headers["X-Api-Version"] = app.config["VERSION"]
+    return resp
 
 @app.route("/extract", methods=['GET'])
 def extract_content():
@@ -50,7 +63,9 @@ def extract_content():
         "summary-list": summary_list
     }
 
-    return jsonify(result)
+    resp = jsonify(result)
+    resp.headers["X-Api-Version"] = app.config["VERSION"]
+    return resp
 
 if __name__ == "__main__":
     app.debug = True
