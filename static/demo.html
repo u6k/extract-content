@@ -5,12 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Extract Content Demo</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
-        crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo="
-        crossorigin="anonymous" />
-    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo=" crossorigin="anonymous" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
     <style>
         body {
             padding-top: 70px;
@@ -44,8 +41,7 @@
 <body>
     <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="/static/demo.html">Extract Content Demo</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-            aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
@@ -78,6 +74,7 @@
                 <input type="text" class="form-control" id="url" placeholder="http://jp.techcrunch.com/2017/08/30/20170829a-preview-of-the-first-wave-of-ar-apps-coming-to-iphones/">
             </div>
             <button id="submit" type="button" class="btn btn-primary">Submit</button>
+            <button id="submit_disabled" type="button" class="btn btn-primary" style="display:none" disabled><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span> Loading...</button>
         </form>
 
         <hr />
@@ -93,7 +90,7 @@
 
         <hr />
 
-        <h2>Result - JSON</h2>
+        <h2 id="heading_result_json">Result - JSON</h2>
         <!-- TODO
         <p>このJSONは、<a href="http://example.com/extract?url=xxx">http://example.com/extract?url=xxx</a>にアクセスすることで取得できます。</p>
         -->
@@ -101,10 +98,10 @@
 
         <hr />
 
-        <h2>Result - Summary</h2>
+        <h2 id="heading_result_summary">Result - Summary</h2>
         <ul id="result_summary"></ul>
 
-        <h2>Result - Content</h2>
+        <h2 id="heading_result_content">Result - Content</h2>
         <div id="result_content"></div>
     </div>
 
@@ -118,6 +115,9 @@
     <script>
         $(function () {
             $("#submit").on("click", function () {
+                $("#submit").hide();
+                $("#submit_disabled").show();
+
                 $.ajax("/extract",
                     {
                         type: "get",
@@ -141,6 +141,12 @@
                         hljs.highlightBlock(block);
                         hljs.lineNumbersBlock(block);
                     });
+
+                    $("#submit").show();
+                    $("#submit_disabled").hide();
+
+                    var heading_result_json_position = $("#heading_result_json").offset().top - 70;
+                    $("body,html").animate({scrollTop:heading_result_json_position}, 500, "swing");
                 });
             });
         });
