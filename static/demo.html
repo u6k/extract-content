@@ -65,7 +65,7 @@
     </nav>
 
     <div class="container">
-        <h1>Extract Content Demo</h1>
+        <h1>Extract Content Demo <span id="api_version" style="font-size:small">version...</span></h1>
         <p>このサイトでは、Extract Contentの動作を確認することができます。下にあるURLボックスに本文抽出をしたいURLを入力して、Submitボタンをクリックしてください。処理結果が表示されます。</p>
 
         <form>
@@ -146,8 +146,19 @@
                     $("#submit_disabled").hide();
 
                     var heading_result_json_position = $("#heading_result_json").offset().top - 70;
-                    $("body,html").animate({scrollTop:heading_result_json_position}, 500, "swing");
+                    $("body,html").animate({ scrollTop: heading_result_json_position }, 500, "swing");
                 });
+            });
+
+            $.ajax("/info",
+                {
+                    type: "get",
+                    cache: false
+                }
+            ).done(function (data) {
+                console.log(data);
+                $("#api_version").empty();
+                $("#api_version").text("v" + data["version"]);
             });
         });
 
