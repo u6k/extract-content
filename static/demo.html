@@ -78,6 +78,7 @@
                 <input type="text" class="form-control" id="url" placeholder="http://jp.techcrunch.com/2017/08/30/20170829a-preview-of-the-first-wave-of-ar-apps-coming-to-iphones/">
             </div>
             <button id="submit" type="button" class="btn btn-primary">Submit</button>
+            <button id="submit_disabled" type="button" class="btn btn-primary" style="display:none" disabled><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span> Loading...</button>
         </form>
 
         <hr />
@@ -118,6 +119,9 @@
     <script>
         $(function () {
             $("#submit").on("click", function () {
+                $("#submit").hide();
+                $("#submit_disabled").show();
+
                 $.ajax("/extract",
                     {
                         type: "get",
@@ -141,6 +145,9 @@
                         hljs.highlightBlock(block);
                         hljs.lineNumbersBlock(block);
                     });
+
+                    $("#submit").show();
+                    $("#submit_disabled").hide();
                 });
             });
         });
