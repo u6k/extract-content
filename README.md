@@ -109,8 +109,8 @@ Swaggerドキュメントを参照するには、swagger-uiコンテナを起動
 $ docker run \
     --rm \
     -p 8080:8080 \
-    -e "SWAGGER_JSON=/opt/swagger.yaml" \
-    -v ${PWD}:/opt \
+    -e "SWAGGER_JSON=/opt/extract-content/docs/swagger.yaml" \
+    -v ${PWD}:/opt/extract-content \
     swaggerapi/swagger-ui
 ```
 
