@@ -32,20 +32,21 @@ def extract_content():
     doc = Document(full_content)
     content = doc.summary()
     title = doc.short_title()
-    markdown_content = pypandoc.convert_text(content, "md", format="html", extra_args=["--normalize", "--no-wrap"])
+    markdown_content = pypandoc.convert_text(content, "markdown_github", format="html", extra_args=["--normalize", "--no-wrap"])
+    simplified_content = pypandoc.convert_text(markdown_content, "html", format="markdown_github")
 
     auto_abstractor = AutoAbstractor()
     abstractable_doc = AbstractableTopNRank()
     abstractable_doc.set_top_n(3)
-    summary_list = auto_abstractor.summarize(markdown_content, abstractable_doc)["summarize_result"]
-    summary_list = [summary.strip() for summary in summary_list]
+    summary_list = auto_abstractor.summarize(simplified_content, abstractable_doc)["summarize_result"]
+    summary_list = [pypandoc.convert_text(summary.strip(), "plain", format="html").strip() for summary in summary_list]
 
     result = {
         "url": url,
         "title": title,
         "full-content": full_content,
         "content": content,
-        "markdown-content": markdown_content,
+        "simplified-content": simplified_content,
         "summary-list": summary_list
     }
 
