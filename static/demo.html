@@ -135,7 +135,7 @@
                         $("#result_summary").append("<li>" + value + "</li>");
                     });
                     $("#result_content").empty();
-                    $("#result_content").append(marked(data["markdown-content"]));
+                    $("#result_content").append(data["simplified-content"]);
 
                     $("#result_json").each(function (i, block) {
                         hljs.highlightBlock(block);
