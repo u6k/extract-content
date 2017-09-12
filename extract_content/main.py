@@ -15,6 +15,58 @@ from auto_abstracts.auto_abstractor import AutoAbstractor, AbstractableTopNRank
 app = Flask(__name__)
 app.config.from_object("settings")
 
+class HtmlContentExtractor():
+    def __init__(self, url):
+        logger.info("HtmlContentExtractor.__init__: url=%s", url)
+
+        # Initialize instance variable
+        self.url = url
+        self.title = ""
+        self.full_content = ""
+        self.content = ""
+        self.simplified_content = ""
+        self.summary_list = ""
+
+        # Get html document
+        r = requests.get(url)
+        logger.debug("status_code=%s", r.status_code)
+        logger.debug("content_type=%s", r.headers["content-type"])
+
+        # Analyze html document
+
+        ## Get full content
+        self.full_content = r.text
+
+        ## Get extracted content
+        doc = Document(self.full_content)
+        self.content = doc.summary()
+
+        ## Get title
+        self.title = doc.short_title()
+
+        ## Get simplified content
+        markdown_content = pypandoc.convert_text(self.content, "markdown_github", format="html", extra_args=["--normalize", "--no-wrap"])
+        self.simplified_content = pypandoc.convert_text(markdown_content, "html", format="markdown_github")
+
+        # Get summary
+        auto_abstractor = AutoAbstractor()
+        abstractable_doc = AbstractableTopNRank()
+        abstractable_doc.set_top_n(3)
+        summary_list = auto_abstractor.summarize(self.simplified_content, abstractable_doc)["summarize_result"]
+        self.summary_list = [pypandoc.convert_text(summary.strip(), "plain", format="html").strip() for summary in summary_list]
+
+    def toDictionary(self):
+        result = {
+            "url": self.url,
+            "title": self.title,
+            "full-content": self.full_content,
+            "content": self.content,
+            "simplified-content": self.simplified_content,
+            "summary-list": self.summary_list
+        }
+
+        return result
+
 @app.route("/")
 def index():
     return redirect("/static/demo.html", code=302)
@@ -37,33 +89,9 @@ def extract_content():
     url = request.args.get("url")
     logger.info("url=%s", url)
 
-    r = requests.get(url)
-    logger.debug("status_code=%s", r.status_code)
-    logger.debug("content_type=%s", r.headers["content-type"])
+    extractor = HtmlContentExtractor(url)
 
-    full_content = r.text
-    doc = Document(full_content)
-    content = doc.summary()
-    title = doc.short_title()
-    markdown_content = pypandoc.convert_text(content, "markdown_github", format="html", extra_args=["--normalize", "--no-wrap"])
-    simplified_content = pypandoc.convert_text(markdown_content, "html", format="markdown_github")
-
-    auto_abstractor = AutoAbstractor()
-    abstractable_doc = AbstractableTopNRank()
-    abstractable_doc.set_top_n(3)
-    summary_list = auto_abstractor.summarize(simplified_content, abstractable_doc)["summarize_result"]
-    summary_list = [pypandoc.convert_text(summary.strip(), "plain", format="html").strip() for summary in summary_list]
-
-    result = {
-        "url": url,
-        "title": title,
-        "full-content": full_content,
-        "content": content,
-        "simplified-content": simplified_content,
-        "summary-list": summary_list
-    }
-
-    resp = jsonify(result)
+    resp = jsonify(extractor.toDictionary())
     resp.headers["X-Api-Version"] = app.config["VERSION"]
     return resp
 
