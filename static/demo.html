@@ -90,7 +90,7 @@
 
         <hr />
 
-        <h2>Result - JSON</h2>
+        <h2 id="heading_result_json">Result - JSON</h2>
         <!-- TODO
         <p>このJSONは、<a href="http://example.com/extract?url=xxx">http://example.com/extract?url=xxx</a>にアクセスすることで取得できます。</p>
         -->
@@ -98,10 +98,10 @@
 
         <hr />
 
-        <h2>Result - Summary</h2>
+        <h2 id="heading_result_summary">Result - Summary</h2>
         <ul id="result_summary"></ul>
 
-        <h2>Result - Content</h2>
+        <h2 id="heading_result_content">Result - Content</h2>
         <div id="result_content"></div>
     </div>
 
@@ -144,6 +144,9 @@
 
                     $("#submit").show();
                     $("#submit_disabled").hide();
+
+                    var heading_result_json_position = $("#heading_result_json").offset().top - 70;
+                    $("body,html").animate({scrollTop:heading_result_json_position}, 500, "swing");
                 });
             });
         });
