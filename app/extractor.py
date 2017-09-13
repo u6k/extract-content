@@ -10,7 +10,14 @@ class HtmlContentExtractor():
         logger.info("HtmlContentExtractor.__init__: url=%s, full_content is None=%s", url, (full_content == None))
 
         # validate
+        if not isinstance(url, str):
+            raise RuntimeError("url not str.")
+        if len(url) == 0:
+            raise RuntimeException("len(url) == 0")
+
         if full_content is not None:
+            if not isinstance(full_content, str):
+                raise RuntimeError("full_content not str.")
             if len(full_content) == 0:
                 raise ContentNoDataException(url)
 

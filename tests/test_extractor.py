@@ -36,6 +36,10 @@ class TestHtmlContentExtractor(TestCase):
         assert len(extractor.simplified_content) > 0
         assert len(extractor.summary_list) == 3
 
+    def test_url_is_none(self):
+        with raises(RuntimeError):
+            HtmlContentExtractor(None)
+
     def test_not_found(self):
         with raises(ContentNotFoundException):
             HtmlContentExtractor("http://example.com/aaa/bbb/ccc.html")
