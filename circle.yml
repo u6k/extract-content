@@ -5,7 +5,7 @@ machine:
 
 compile:
     override:
-        - docker build -t extract-content-dev -f Dockerfile-dev.
+        - docker build -t extract-content-dev -f Dockerfile-dev .
 
 test:
     override:
