@@ -57,7 +57,7 @@ JSONが返ります。
 {
   "content": "<html><body><div><div class=\"article-entry text l-featured-container\">...(中略)...</body></html>",
   "full-content": "<!DOCTYPE html>\n<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:og=\"http://opengraphprotocol.org/schema/\" xmlns:fb=\"http://www.facebook.com/2008/fbml\" lang=\"en\">...(中略)...</body>\n</html>\n<!--\n\tgenerated 268 seconds ago\n\tgenerated in 0.216 seconds\n\tserved from batcache in 0.002 seconds\n\texpires in 32 seconds\n-->\n",
-  "markdown-content": "With the launch of ARKit, we are going to see augmented reality apps become available for about 500 million iPhones in the next 12 months, and...(中略)...Featured Image: Hero Images/Getty Images\n\n\n",
+  "simplified-content": "<h1>extract-content</1>\n<p>HTML文書の本文部分を抽出します。...(中略)...<a href=\"https://github.com/u6k/extract-content/blob/master/LICENSE\">MIT License</a></p>",
   "summary-list": [
     "With the launch of ARKit, we are going to see augmented reality apps become available for about 500 million iPhones in the next 12 months, and at least triple that in the following 12 months \u2014 as we can now include the numbers of ARCore-supporting devices from Google.",
     "Matt Miesnieks is a partner at [Super Ventures](http://www.superventures.com/).",
