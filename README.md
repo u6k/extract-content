@@ -95,11 +95,28 @@ $ docker build -t extract-content-dev -f Dockerfile-dev .
 ```
 $ docker run \
     --rm \
+    -it \
     --name extract-content-dev \
     -p 5000:5000 \
     -v ${PWD}:/opt/extract-content \
-    extract-content-dev
+    extract-content-dev bash
 ```
+
+アプリケーションを起動します。
+
+```
+$ python run.py
+```
+
+### テストを実行
+
+テストを実行するには、開発用Dockerコンテナを起動して、 `py.test` を実行します。
+
+```
+$ py.test --capture=no --junit-xml=build/results.xml
+```
+
+`build/results.xml` にXUnit形式のテスト結果が出力されます。
 
 ### Swaggerドキュメントを参照
 
@@ -109,8 +126,8 @@ Swaggerドキュメントを参照するには、swagger-uiコンテナを起動
 $ docker run \
     --rm \
     -p 8080:8080 \
-    -e "SWAGGER_JSON=/opt/swagger.yaml" \
-    -v ${PWD}:/opt \
+    -e "SWAGGER_JSON=/opt/extract-content/docs/swagger.yaml" \
+    -v ${PWD}:/opt/extract-content \
     swaggerapi/swagger-ui
 ```
 

@@ -5,11 +5,14 @@ machine:
 
 compile:
     override:
-        - docker build -t u6kapps/extract-content .
+        - docker build -t extract-content-dev -f Dockerfile-dev .
 
 test:
     override:
-        - /bin/true
+        - docker run -v ${PWD}:/opt/extract-content extract-content-dev py.test --capture=no --junit-xml=build/results.xml
+        - docker build -t u6kapps/extract-content .
+    post:
+        - cp -r build/* $CIRCLE_TEST_REPORTS/
 
 deployment:
     release:
