@@ -11,4 +11,4 @@ COPY . /opt/extract-content/
 
 EXPOSE 5000
 
-CMD ["python", "/opt/extract-content/extract_content/main.py"]
+CMD ["python", "/opt/extract-content/run.py"]
