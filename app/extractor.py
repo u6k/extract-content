@@ -5,15 +5,11 @@ handler.setLevel(DEBUG)
 logger.setLevel(DEBUG)
 logger.addHandler(handler)
 
-from flask import Flask, request, jsonify, redirect
 from readability import Document
 import requests
 import pypandoc
 import codecs
 from auto_abstracts.auto_abstractor import AutoAbstractor, AbstractableTopNRank
-
-app = Flask(__name__)
-app.config.from_object("settings")
 
 class HtmlContentExtractor():
     def __init__(self, url):
@@ -66,35 +62,3 @@ class HtmlContentExtractor():
         }
 
         return result
-
-@app.route("/")
-def index():
-    return redirect("/static/demo.html", code=302)
-
-@app.route("/info", methods=['GET'])
-def info():
-    logger.info("#info start.")
-
-    result = {
-        "version": app.config["VERSION"]
-    }
-
-    resp = jsonify(result)
-    resp.headers["X-Api-Version"] = app.config["VERSION"]
-    return resp
-
-@app.route("/extract", methods=['GET'])
-def extract_content():
-    logger.info("#extract_content start.")
-    url = request.args.get("url")
-    logger.info("url=%s", url)
-
-    extractor = HtmlContentExtractor(url)
-
-    resp = jsonify(extractor.toDictionary())
-    resp.headers["X-Api-Version"] = app.config["VERSION"]
-    return resp
-
-if __name__ == "__main__":
-    app.debug = True
-    app.run(host='0.0.0.0')
