@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Extract Content Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github-gist.min.css" integrity="sha256-tAflq+ymku3Khs+I/WcAneIlafYgDiOQ9stIHH985Wo=" crossorigin="anonymous" />
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 70px;
+        }
+
+        img {
+            max-width: 100%;
+        }
+
+        td.hljs-ln-numbers {
+            text-align: center;
+            color: #ccc;
+            border-right: 1px solid #999;
+            vertical-align: top;
+            padding-right: 5px;
+
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        td.hljs-ln-code {
+            padding-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/static/demo.html">Extract Content Demo</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="https://github.com/u6k/extract-content/"><i class="fa fa-github fa-lg"></i> GitHub</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://twitter.com/u6k_yu1"><i class="fa fa-twitter fa-lg"></i> Twitter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://www.facebook.com/yuuichi.naono"><i class="fa fa-facebook fa-lg"></i> Facebook</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="https://blog.u6k.me/"><i class="fa fa-book fa-lg"></i> u6k.Blog()</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="http://qiita.com/u6k"><i class="fa fa-folder-open fa-lg"></i> Qiita</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Extract Content Demo <span id="api_version" style="font-size:small">version...</span></h1>
+        <p>このサイトでは、Extract Contentの動作を確認することができます。下にあるURLボックスに本文抽出をしたいURLを入力して、Submitボタンをクリックしてください。処理結果が表示されます。</p>
+
+        <form>
+            <div class="form-group">
+                <label for="url">URL</label>
+                <input type="text" class="form-control" id="url" placeholder="例: http://jp.techcrunch.com/2017/08/30/20170829a-preview-of-the-first-wave-of-ar-apps-coming-to-iphones/" value="http://jp.techcrunch.com/2017/08/30/20170829a-preview-of-the-first-wave-of-ar-apps-coming-to-iphones/">
+            </div>
+            <button id="submit" type="button" class="btn btn-primary">Submit</button>
+            <button id="submit_disabled" type="button" class="btn btn-primary" style="display:none" disabled><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span> Loading...</button>
+            <div id="alert" class="alert alert-danger" role="alert" style="display:none">alert</div>
+        </form>
+
+        <hr />
+
+        <h2>Extract Contentとは</h2>
+        <p>
+            <a href="https://circleci.com/gh/u6k/extract-content"><img src="https://img.shields.io/circleci/project/github/u6k/extract-content.svg" alt="CircleCI" /></a>
+            <a href="https://github.com/u6k/extract-content/blob/master/LICENSE"><img src="https://img.shields.io/github/license/u6k/extract-content.svg" alt="license" /></a>
+            <a href="https://github.com/u6k/extract-content/releases"><img src="https://img.shields.io/github/release/u6k/extract-content.svg" alt="GitHub release" /></a>
+            <a href="https://hub.docker.com/r/u6kapps/extract-content/"><img src="https://img.shields.io/docker/pulls/u6kapps/extract-content.svg" alt="Docker Pulls" /></a>
+        </p>
+        <p>URLを指定して、Webページの本文部分を抽出したり要約したりするWebAPIです。詳細は<a href="https://github.com/u6k/extract-content">u6k/extract-content - GitHub</a>をご覧ください。</p>
+
+        <hr />
+
+        <h2 id="heading_result_json">Result - JSON</h2>
+        <!-- TODO
+        <p>このJSONは、<a href="http://example.com/extract?url=xxx">http://example.com/extract?url=xxx</a>にアクセスすることで取得できます。</p>
+        -->
+        <pre><code id="result_json" class="json"></code></pre>
+
+        <hr />
+
+        <h2 id="heading_result_summary">Result - Summary</h2>
+        <ul id="result_summary"></ul>
+
+        <h2 id="heading_result_content">Result - Content</h2>
+        <div id="result_content"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.js" integrity="sha256-JpPHcp4DGec4irAB1wv46K9l/yzUEiCsErdUe+hVmfE=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/json.min.js" integrity="sha256-KPdGtw3AdDen/v6+9ue/V3m+9C2lpNiuirroLsHrJZM=" crossorigin="anonymous"></script>
+    <script src="./highlightjs-line-numbers.min.js"></script>
+    <script>
+        $(function () {
+            /*
+             * Submit
+             */
+            $("#submit").on("click", function () {
+                // Validate
+                if ($("#url").val().length == 0) {
+                    $("#alert").empty();
+                    $("#alert").text("URLを入力してください。");
+                    $("#alert").show();
+                    return;
+                }
+
+                // Control display
+                $("#submit").hide();
+                $("#submit_disabled").show();
+                $("#alert").hide();
+
+                // Submit
+                $.ajax("/extract",
+                    {
+                        type: "get",
+                        data: {
+                            url: $("#url").val()
+                        },
+                        cache: false,
+                        timeout: 10000
+                    }
+                ).done(function (data) {
+                    // Render result
+                    console.log(data);
+                    $("#result_json").empty();
+                    $("#result_json").text(JSON.stringify(data, null, 2));
+                    $("#result_summary").empty();
+                    data["summary-list"].forEach(function (value) {
+                        $("#result_summary").append("<li>" + value + "</li>");
+                    });
+                    $("#result_content").empty();
+                    $("#result_content").append(data["simplified-content"]);
+
+                    $("#result_json").each(function (i, block) {
+                        hljs.highlightBlock(block);
+                        hljs.lineNumbersBlock(block);
+                    });
+
+                    // Scroll to result
+                    var heading_result_json_position = $("#heading_result_json").offset().top - 70;
+                    $("body,html").animate({ scrollTop: heading_result_json_position }, 500, "swing");
+                }).fail(function () {
+                    $("#alert").empty();
+                    $("#alert").text("サーバー側でエラーが発生しました。お手数ですが、別のURLでお試しください。");
+                    $("#alert").show();
+                }).always(function () {
+                    $("#submit").show();
+                    $("#submit_disabled").hide();
+                });
+            });
+
+            /*
+             * Get version
+             */
+            $.ajax("/info",
+                {
+                    type: "get",
+                    cache: false,
+                    timeout: 10000,
+                }
+            ).done(function (data) {
+                console.log(data);
+                $("#api_version").empty();
+                $("#api_version").text("v" + data["version"]);
+            });
+        });
+
+        var escapeHtml = (function (String) {
+            var escapeMap = {
+                '&': '&amp;',
+                "'": '&#x27;',
+                '`': '&#x60;',
+                '"': '&quot;',
+                '<': '&lt;',
+                '>': '&gt;'
+            };
+            var escapeReg = '[';
+            var reg;
+            for (var p in escapeMap) {
+                if (escapeMap.hasOwnProperty(p)) {
+                    escapeReg += p;
+                }
+            }
+            escapeReg += ']';
+            reg = new RegExp(escapeReg, 'g');
+
+            return function escapeHtml(str) {
+                str = (str === null || str === undefined) ? '' : '' + str;
+                return str.replace(reg, function (match) {
+                    return escapeMap[match];
+                });
+            };
+        }(String));
+    </script>
+</body>
+
+</html>

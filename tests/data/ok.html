@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<!-- saved from url=(0055)http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc -->
+<html xmlns:og="http://ogp.me/ns#"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>Flaskにおける設定ファイルのベストプラクティス - Qiita</title><meta content="width=device-width,initial-scale=1" name="viewport"><meta content="
+
+概要
+
+Flaskアプリケーションで設定ファイルを作成する際に
+環境ごとの分割や内容の隠蔽をどうすればうまくいくかの検討をしていました。
+
+公式ドキュメントと海外の方の記事を読んで思ったことをまとめます。
+このページの大部分は以上の2ページの和訳から作られています。
+
+
+Flaskにおけるconfig
+
+Flaskの設定ファイルで押さえておいたほうが良さそうな部分をまとめます。
+
+
+基本的な設定
+
+Flaskインスタンスのconfig変数に辞書形式で書き込むことがで..." name="description"><meta content="summary" name="twitter:card"><meta content="@Qiita" name="twitter:site"><meta content="Flaskにおける設定ファイルのベストプラクティス - Qiita" property="og:title"><meta content="article" property="og:type"><meta content="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc" property="og:url"><meta content="http://cdn.qiita.com/assets/qiita-fb-2887e7b4aad86fd8c25cea84846f2236.png" property="og:image"><meta content="
+## 概要
+
+Flaskアプリケーションで設定ファイルを作成する際に
+環境ごとの分割や内容の隠蔽をどうすればうまくいくかの検討をしていました。
+
+[公式ドキュメント](http://flask.pocoo.org/docs/0.11..." property="og:description"><meta content="Qiita" property="og:site_name"><meta content="564524038" property="fb:admins"><link rel="shortcut icon" type="image/x-icon" href="https://cdn.qiita.com/assets/favicons/public/production-4ff10c1e1e2b5fcb353ff9cafdd56c70.ico"><link rel="apple-touch-icon" type="image/png" href="https://cdn.qiita.com/assets/favicons/public/apple-touch-icon-f9a6afad761ec2306e10db2736187c8b.png"><link href="http://qiita.com/opensearch.xml" rel="search" title="Qiita" type="application/opensearchdescription+xml"><link rel="stylesheet" media="all" href="./ok_files/public-2997b9e1238a0a2766b28a8d4801de23.min.css"><meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="BZpgqCUf7Er6GWtYsDpBHE8em2v3n5+YUJEYFR7CZe+L/hB0F5naLrFZvsQ16mUvnoRIiL2D84Mm0Sc/U6zvGA=="><iframe height="0" width="0" src="./ok_files/activityi.html" style="display: none; visibility: hidden;"></iframe><iframe height="0" width="0" src="./ok_files/activityi(1).html" style="display: none; visibility: hidden;"></iframe><script async="" src="./ok_files/uwt.js.ダウンロード"></script><script src="./ok_files/809797712462041" async=""></script><script src="./ok_files/996402550503199" async=""></script><script src="./ok_files/954575148009345" async=""></script><script src="./ok_files/437265843064161" async=""></script><script src="./ok_files/262978464137256" async=""></script><script src="./ok_files/256605841418458" async=""></script><script src="./ok_files/386990638325508" async=""></script><script async="" src="./ok_files/fbevents.js.ダウンロード"></script><script type="text/javascript" async="" src="./ok_files/conversion_async.js.ダウンロード"></script><script type="text/javascript" async="" src="./ok_files/conversion_async.js.ダウンロード"></script><script async="" src="./ok_files/gtm.js.ダウンロード"></script><script src="./ok_files/cb=gapi.loaded_1" async=""></script><script src="./ok_files/cb=gapi.loaded_0" async=""></script><script async="" src="./ok_files/widgets.js.ダウンロード" id="twitter-jssdk"></script><script async="" src="./ok_files/all.js.ダウンロード" id="facebook-jssdk"></script><script async="" src="./ok_files/plusone.js.ダウンロード" id="google-plusone-jssdk" gapi_processed="true"></script><script async="" src="./ok_files/btn.js.ダウンロード" id="pocket-btn-js"></script><script type="text/javascript" async="" src="./ok_files/analytics.js.ダウンロード"></script><script>
+  window.gtmDataLayer = [
+    {
+      'analytics.dimension5': 'false',
+      'app.env': 'production',
+      'app.layoutVersion': 1,
+      'app.userId': 57059
+    },
+    { 'gtm.start': new Date().getTime(), event: 'gtm.js' }
+  ];
+</script>
+<script src="./ok_files/gtm.js(1).ダウンロード" async=""></script>
+<style id="react-tooltip">.__react_component_tooltip{border-radius:3px;display:inline-block;font-size:13px;left:-999em;opacity:0;padding:8px 21px;position:fixed;pointer-events:none;transition:opacity 0.3s ease-out;top:-999em;visibility:hidden;z-index:999}.__react_component_tooltip:before,.__react_component_tooltip:after{content:"";width:0;height:0;position:absolute}.__react_component_tooltip.show{opacity:0.9;margin-top:0px;margin-left:0px;visibility:visible}.__react_component_tooltip.type-dark{color:#fff;background-color:#222}.__react_component_tooltip.type-dark.place-top:after{border-top-color:#222;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-dark.place-bottom:after{border-bottom-color:#222;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-dark.place-left:after{border-left-color:#222;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-dark.place-right:after{border-right-color:#222;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-dark.border{border:1px solid #fff}.__react_component_tooltip.type-dark.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-dark.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-dark.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-dark.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-success{color:#fff;background-color:#8DC572}.__react_component_tooltip.type-success.place-top:after{border-top-color:#8DC572;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-success.place-bottom:after{border-bottom-color:#8DC572;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-success.place-left:after{border-left-color:#8DC572;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-success.place-right:after{border-right-color:#8DC572;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-success.border{border:1px solid #fff}.__react_component_tooltip.type-success.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-success.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-success.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-success.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-warning{color:#fff;background-color:#F0AD4E}.__react_component_tooltip.type-warning.place-top:after{border-top-color:#F0AD4E;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-warning.place-bottom:after{border-bottom-color:#F0AD4E;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-warning.place-left:after{border-left-color:#F0AD4E;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-warning.place-right:after{border-right-color:#F0AD4E;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-warning.border{border:1px solid #fff}.__react_component_tooltip.type-warning.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-warning.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-warning.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-warning.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-error{color:#fff;background-color:#BE6464}.__react_component_tooltip.type-error.place-top:after{border-top-color:#BE6464;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-error.place-bottom:after{border-bottom-color:#BE6464;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-error.place-left:after{border-left-color:#BE6464;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-error.place-right:after{border-right-color:#BE6464;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-error.border{border:1px solid #fff}.__react_component_tooltip.type-error.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-error.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-error.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-error.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-info{color:#fff;background-color:#337AB7}.__react_component_tooltip.type-info.place-top:after{border-top-color:#337AB7;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-info.place-bottom:after{border-bottom-color:#337AB7;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-info.place-left:after{border-left-color:#337AB7;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-info.place-right:after{border-right-color:#337AB7;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-info.border{border:1px solid #fff}.__react_component_tooltip.type-info.border.place-top:before{border-top:8px solid #fff}.__react_component_tooltip.type-info.border.place-bottom:before{border-bottom:8px solid #fff}.__react_component_tooltip.type-info.border.place-left:before{border-left:8px solid #fff}.__react_component_tooltip.type-info.border.place-right:before{border-right:8px solid #fff}.__react_component_tooltip.type-light{color:#222;background-color:#fff}.__react_component_tooltip.type-light.place-top:after{border-top-color:#fff;border-top-style:solid;border-top-width:6px}.__react_component_tooltip.type-light.place-bottom:after{border-bottom-color:#fff;border-bottom-style:solid;border-bottom-width:6px}.__react_component_tooltip.type-light.place-left:after{border-left-color:#fff;border-left-style:solid;border-left-width:6px}.__react_component_tooltip.type-light.place-right:after{border-right-color:#fff;border-right-style:solid;border-right-width:6px}.__react_component_tooltip.type-light.border{border:1px solid #222}.__react_component_tooltip.type-light.border.place-top:before{border-top:8px solid #222}.__react_component_tooltip.type-light.border.place-bottom:before{border-bottom:8px solid #222}.__react_component_tooltip.type-light.border.place-left:before{border-left:8px solid #222}.__react_component_tooltip.type-light.border.place-right:before{border-right:8px solid #222}.__react_component_tooltip.place-top{margin-top:-10px}.__react_component_tooltip.place-top:before{border-left:10px solid transparent;border-right:10px solid transparent;bottom:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-top:after{border-left:8px solid transparent;border-right:8px solid transparent;bottom:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-bottom{margin-top:10px}.__react_component_tooltip.place-bottom:before{border-left:10px solid transparent;border-right:10px solid transparent;top:-8px;left:50%;margin-left:-10px}.__react_component_tooltip.place-bottom:after{border-left:8px solid transparent;border-right:8px solid transparent;top:-6px;left:50%;margin-left:-8px}.__react_component_tooltip.place-left{margin-left:-10px}.__react_component_tooltip.place-left:before{border-top:6px solid transparent;border-bottom:6px solid transparent;right:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-left:after{border-top:5px solid transparent;border-bottom:5px solid transparent;right:-6px;top:50%;margin-top:-4px}.__react_component_tooltip.place-right{margin-left:10px}.__react_component_tooltip.place-right:before{border-top:6px solid transparent;border-bottom:6px solid transparent;left:-8px;top:50%;margin-top:-5px}.__react_component_tooltip.place-right:after{border-top:5px solid transparent;border-bottom:5px solid transparent;left:-6px;top:50%;margin-top:-4px}.__react_component_tooltip .multi-line{display:block;padding:2px 0px;text-align:center}</style><style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style><script type="text/javascript" charset="utf-8" async="" src="./ok_files/button.ebb7267483d1d2c7b640fda9d827cc8f.js.ダウンロード"></script><style type="text/css">.fb_hidden{position:absolute;top:-10000px;z-index:10001}.fb_reposition{overflow:hidden;position:relative}.fb_invisible{display:none}.fb_reset{background:none;border:0;border-spacing:0;color:#000;cursor:auto;direction:ltr;font-family:"lucida grande", tahoma, verdana, arial, sans-serif;font-size:11px;font-style:normal;font-variant:normal;font-weight:normal;letter-spacing:normal;line-height:1;margin:0;overflow:visible;padding:0;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;visibility:visible;white-space:normal;word-spacing:normal}.fb_reset>div{overflow:hidden}.fb_link img{border:none}@keyframes fb_transform{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}
+.fb_dialog{background:rgba(82, 82, 82, .7);position:absolute;top:-10000px;z-index:10001}.fb_reset .fb_dialog_legacy{overflow:visible}.fb_dialog_advanced{padding:10px;-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}.fb_dialog_content{background:#fff;color:#333}.fb_dialog_close_icon{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;position:absolute;right:18px;top:17px;width:15px}.fb_dialog_mobile .fb_dialog_close_icon{top:5px;left:5px;right:auto}.fb_dialog_padding{background-color:transparent;position:absolute;width:1px;z-index:-1}.fb_dialog_close_icon:hover{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -15px transparent}.fb_dialog_close_icon:active{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yq/r/IE9JII6Z1Ys.png) no-repeat scroll 0 -30px transparent}.fb_dialog_loader{background-color:#f6f7f9;border:1px solid #606060;font-size:24px;padding:20px}.fb_dialog_top_left,.fb_dialog_top_right,.fb_dialog_bottom_left,.fb_dialog_bottom_right{height:10px;width:10px;overflow:hidden;position:absolute}.fb_dialog_top_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 0;left:-10px;top:-10px}.fb_dialog_top_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -10px;right:-10px;top:-10px}.fb_dialog_bottom_left{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -20px;bottom:-10px;left:-10px}.fb_dialog_bottom_right{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ye/r/8YeTNIlTZjm.png) no-repeat 0 -30px;right:-10px;bottom:-10px}.fb_dialog_vert_left,.fb_dialog_vert_right,.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{position:absolute;background:#525252;filter:alpha(opacity=70);opacity:.7}.fb_dialog_vert_left,.fb_dialog_vert_right{width:10px;height:100%}.fb_dialog_vert_left{margin-left:-10px}.fb_dialog_vert_right{right:0;margin-right:-10px}.fb_dialog_horiz_top,.fb_dialog_horiz_bottom{width:100%;height:10px}.fb_dialog_horiz_top{margin-top:-10px}.fb_dialog_horiz_bottom{bottom:0;margin-bottom:-10px}.fb_dialog_iframe{line-height:0}.fb_dialog_content .dialog_title{background:#6d84b4;border:1px solid #365899;color:#fff;font-size:14px;font-weight:bold;margin:0}.fb_dialog_content .dialog_title>span{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/yd/r/Cou7n-nqK52.gif) no-repeat 5px 50%;float:left;padding:5px 0 7px 26px}body.fb_hidden{-webkit-transform:none;height:100%;margin:0;overflow:visible;position:absolute;top:-10000px;left:0;width:100%}.fb_dialog.fb_dialog_mobile.loading{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/ya/r/3rhSv5V8j3o.gif) white no-repeat 50% 50%;min-height:100%;min-width:100%;overflow:hidden;position:absolute;top:0;z-index:10001}.fb_dialog.fb_dialog_mobile.loading.centered{width:auto;height:auto;min-height:initial;min-width:initial;background:none}.fb_dialog.fb_dialog_mobile.loading.centered #fb_dialog_loader_spinner{width:100%}.fb_dialog.fb_dialog_mobile.loading.centered .fb_dialog_content{background:none}.loading.centered #fb_dialog_loader_close{color:#fff;display:block;padding-top:20px;clear:both;font-size:18px}#fb-root #fb_dialog_ipad_overlay{background:rgba(0, 0, 0, .45);position:absolute;bottom:0;left:0;right:0;top:0;width:100%;min-height:100%;z-index:10000}#fb-root #fb_dialog_ipad_overlay.hidden{display:none}.fb_dialog.fb_dialog_mobile.loading iframe{visibility:hidden}.fb_dialog_content .dialog_header{-webkit-box-shadow:white 0 1px 1px -1px inset;background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#738ABA), to(#2C4987));border-bottom:1px solid;border-color:#1d4088;color:#fff;font:14px Helvetica, sans-serif;font-weight:bold;text-overflow:ellipsis;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0;vertical-align:middle;white-space:nowrap}.fb_dialog_content .dialog_header table{-webkit-font-smoothing:subpixel-antialiased;height:43px;width:100%}.fb_dialog_content .dialog_header td.header_left{font-size:12px;padding-left:5px;vertical-align:middle;width:60px}.fb_dialog_content .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:-webkit-gradient(linear, 0% 0%, 0% 100%, from(#4966A6), color-stop(.5, #355492), to(#2A4887));border:1px solid #29487d;-webkit-background-clip:padding-box;-webkit-border-radius:3px;-webkit-box-shadow:rgba(0, 0, 0, .117188) 0 1px 1px inset, rgba(255, 255, 255, .167969) 0 1px 0;display:inline-block;margin-top:3px;max-width:85px;line-height:18px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{border:none;background:none;color:#fff;font:12px Helvetica, sans-serif;font-weight:bold;margin:2px -12px;padding:2px 6px 3px 6px;text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog_content .dialog_header .header_center{color:#fff;font-size:16px;font-weight:bold;line-height:18px;text-align:center;vertical-align:middle}.fb_dialog_content .dialog_content{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat 50% 50%;border:1px solid #555;border-bottom:0;border-top:0;height:150px}.fb_dialog_content .dialog_footer{background:#f6f7f9;border:1px solid #555;border-top-color:#ccc;height:40px}#fb_dialog_loader_close{float:left}.fb_dialog.fb_dialog_mobile .fb_dialog_close_button{text-shadow:rgba(0, 30, 84, .296875) 0 -1px 0}.fb_dialog.fb_dialog_mobile .fb_dialog_close_icon{visibility:hidden}#fb_dialog_loader_spinner{animation:rotateSpinner 1.2s linear infinite;background-color:transparent;background-image:url(https://static.xx.fbcdn.net/rsrc.php/v3/yD/r/t-wz8gw1xG1.png);background-repeat:no-repeat;background-position:50% 50%;height:24px;width:24px}@keyframes rotateSpinner{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.fb_iframe_widget{display:inline-block;position:relative}.fb_iframe_widget span{display:inline-block;position:relative;text-align:justify}.fb_iframe_widget iframe{position:absolute}.fb_iframe_widget_fluid_desktop,.fb_iframe_widget_fluid_desktop span,.fb_iframe_widget_fluid_desktop iframe{max-width:100%}.fb_iframe_widget_fluid_desktop iframe{min-width:220px;position:relative}.fb_iframe_widget_lift{z-index:1}.fb_hide_iframes iframe{position:relative;left:-10000px}.fb_iframe_widget_loader{position:relative;display:inline-block}.fb_iframe_widget_fluid{display:inline}.fb_iframe_widget_fluid span{width:100%}.fb_iframe_widget_loader iframe{min-height:32px;z-index:2;zoom:1}.fb_iframe_widget_loader .FB_Loader{background:url(https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/jKEcVPZFk-2.gif) no-repeat;height:32px;width:32px;margin-left:-16px;position:absolute;left:50%;z-index:4}</style></head><body class=" with-js"><noscript>&lt;iframe height="0" src="//www.googletagmanager.com/ns.html?id=GTM-TBQWPN" style="display:none;visibility:hidden" width="0"&gt;&lt;/iframe&gt;</noscript><script>
+  document.body.className = document.body.className.replace('without-js', '') + ' with-js';
+  window.Qiita = {"asset_host":"cdn.qiita.com","TLD":"com","controller_path":"public/items","controller_action":"public/items#show","controller":"items","action":"show","action_path":"public/items#show","env":"production","flash":{},"is_team_page":false,"request_parameters":{"controller":"public/items","action":"show","user_id":"nanakenashi","type":"items","id":"e272ff1aafb3889230bc"},"root_domain":"qiita.com","variant":null,"config":{"mixpanel":{"per_team":"c0a2116368b33b44b5029ebd2cc9b094","public":"17d24b448ca579c365d2d1057f3a1791","team":"b7c0342acba2dbc8742484d98788efb3"},"default_locale":"ja","locale":"ja"},"team":null,"user":{"id":57059,"url_name":"u6k","profile_image_url":"https://qiita-image-store.s3.amazonaws.com/0/57059/profile-images/1473694195","email":"u6k.apps@gmail.com","staff":false},"GIT_BRANCH":null,"DEBUG":false};
+
+  /* You are logged in */
+</script>
+<div class="headerContainer headerContainer-public" role="navigation"><script type="application/json" class="js-react-on-rails-component" data-component-name="HeaderContainer" data-dom-id="HeaderContainer-react-component-b775da0a-d1a4-4909-85af-b9a5360c3a87">{"user":{"profile_image_url":"https://qiita-image-store.s3.amazonaws.com/0/57059/profile-images/1473694195","team_only":false,"teams":[],"url_name":"u6k"},"team":null,"news":{"type":"Release","content":"Qiitaユーザー向けのMastodon、Qiitadon を試験的に公開しました","url":"http://blog.qiita.com/post/161193715974/qiitadon?utm_source=qiita\u0026utm_medium=header_news"},"initial_unread_count":0,"siteid_image":"https://cdn.qiita.com/siteid-reverse.png","is_team_page":false,"on_team_setting":false,"show_post_menu":true,"show_search_menu":true,"is_fluid":false,"locale":"ja"}</script>
+    <div id="HeaderContainer-react-component-b775da0a-d1a4-4909-85af-b9a5360c3a87"><header data-reactroot="" class="sharedHeader sharedHeader-public"><div class="sharedHeader_inner"><div class="sharedHeader_left"><span class="sharedHeader_logo open"><a class="sharedHeader_logo_main" href="http://qiita.com/"><span class="sharedHeader_logo_figure"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75 26"><title>Qiita</title><path d="M24.6 12.2C24.6 6.2 20 0 12.2 0 6.2 0 0 4.6 0 12.4c0 6 4.6 12.2 12.4 12.2 2.5 0 5-.8 7.1-2.3l3.6 3.6 1.6-1.6-3.4-3.4c2.1-2.3 3.3-5.3 3.3-8.7zm-12.4-10c5.7 0 10.2 4.4 10.2 10.1 0 4.9-3.8 10.1-10.1 10.1s-10.1-5.1-10.1-10c0-6.4 5.1-10.2 10-10.2zM30.5 7.1h2.1v17h-2.1zM31.5 4.8c-1 0-1.8-.8-1.8-1.8s.8-1.8 1.8-1.8 1.8.8 1.8 1.8-.8 1.8-1.8 1.8zM40 4.8c-1 0-1.8-.8-1.8-1.8S39 1.2 40 1.2s1.8.8 1.8 1.8S41 4.8 40 4.8zM39 7.1h2.1v17H39zM53.7 24.4c-3.9 0-6.2-3-6.2-6v-16h2.1v4.7H57v2.1h-7.4v9.3c0 1.9 1.5 3.9 4.1 3.9.7 0 1.4-.2 2-.6l.2-.1 1 1.8-.2.1c-.9.5-2 .8-3 .8zM67.6 24.5c-5.7 0-9.1-4.5-9.1-8.9 0-5.7 4.5-9.1 8.9-9.1 2.3 0 4.1.8 5.4 2.3V7.1h2.1v17h-2.1v-1.9c-1.2 1.5-3 2.3-5.2 2.3zm-.2-15.9c-3.4 0-6.8 2.6-6.8 7 0 3.4 2.6 6.8 7 6.8 2 0 4-.9 5.3-2.5v-8.8c-1.4-1.6-3.3-2.5-5.5-2.5z"></path></svg></span></a></span><form class="navbar-form navbar-left searchForm" action="http://qiita.com/search" method="get"><div class="searchForm_queryWrapper"><input class="form-control searchForm_query" placeholder="キーワードを入力" autocomplete="off" name="q" value=""><div class="searchForm_wiseSearchButton"><i class="fa fa-caret-down"></i></div></div></form><div class="navbar-text headerNews hidden-xs hidden-sm"><div class="headerNews_label label label-warning">Release</div><a class="navbar-link" target="_blank" href="http://blog.qiita.com/post/161193715974/qiitadon?utm_source=qiita&amp;utm_medium=header_news">Qiitaユーザー向けのMastodon、Qiitadon を試験的に公開しました</a></div></div><div class="sharedHeader_right"><div class="sharedHeader_searchIcon"><a data-toggle="modal" data-target="#js-searchModal"><i class="fa fa-search"></i></a></div><div class="sharedHeader_searchModal in modal fade" aria-hidden="false" id="js-searchModal"><div class="modal-dialog"><div class="modal-content"><div class="modal-body"><form action="http://qiita.com/search" method="get"><input type="hidden" name="sort" id="sort" value="rel"><div class="row"><div class="col-xs-9"><input type="text" name="q" id="q" class="form-control"></div><div class="col-xs-3"><input type="submit" name="commit" value="Search" class="btn btn-default btn-sm"></div></div></form></div></div></div></div><div class="sharedHeader_newItem btn-group"><a class="sharedHeader_newItem_btn sharedHeader_newItem_post btn" href="http://qiita.com/drafts/new"><i class="fa fa-lg fa-edit"></i><!-- react-text: 36 -->投稿する<!-- /react-text --></a><a class="sharedHeader_newItem_btn dropdown-toggle btn"><i class="fa fa-caret-down"></i><span class="sharedHeader_newItem_xsEdit"><i class="fa fa-edit"></i></span></a></div><div class="sharedHeader_stockItems"><a href="http://qiita.com/u6k/stock">ストック一覧</a></div><div class="sharedHeader_stockItems_xsStock"><a href="http://qiita.com/u6k/stock" title="ストック一覧"><i class="fa fa-folder"></i></a></div><div class="sharedHeader_notifications"><div class="globalNotifications open active"><div class="globalNotifications__surface"><div class="globalNotifications_count">0</div></div></div></div><div class="sharedHeader_user open"><a class="sharedHeader_user_clickable"><img class="sharedHeader_user_image" src="./ok_files/1473694195" width="32" height="32"></a></div></div></div></header></div>
+    
+</div><div id="main"><script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+ga('create', 'UA-82435134-1', 'auto', { name: 'userTracker' });
+ga('userTracker.send', 'pageview');</script><script async="" src="./ok_files/analytics.js.ダウンロード"></script><script type="application/ld+json">{  "@context": "http://schema.org",  "@type": "BreadcrumbList",  "itemListElement": [    {      "@type": "ListItem",      "position": 1,      "item": {        "@id": "/",        "name": "Qiita"      }    },    {      "@type": "ListItem",      "position": 2,      "item": {        "@id": "/items",        "name": "投稿"      }    },    {      "@type": "ListItem",      "position": 3,      "item": {        "@id": "/tags/Python",        "name": "Python"      }    }  ]}</script><article itemscope="" itemtype="http://schema.org/Article"><div class="ArticleMainHeader "><div class="container"></div><div class="container"><div class="row s-flex-align-center"><div class="col-sm-9"><h1 class="ArticleMainHeader__title" itemprop="headline">Flaskにおける設定ファイルのベストプラクティス</h1><ul class="TagList"><li class="TagList__item" data-count="12248"><a class="u-link-unstyled TagList__label" href="http://qiita.com/tags/Python"><img alt="Python" class="TagList__icon" src="./ok_files/medium.jpg"><span>Python</span></a></li><li class="TagList__item" data-count="219"><a class="u-link-unstyled TagList__label" href="http://qiita.com/tags/Flask"><img alt="Flask" class="TagList__icon" src="./ok_files/medium(1).jpg"><span>Flask</span></a></li></ul></div><div class="col-sm-3"><div class="itemsShowHeaderStock"><ul class="list-unstyled itemsShowHeaderStock_statusList"><li><div class="itemsShowHeaderStock_count stock"><span class="fa fa-thumbs-up"></span><span class="js-likecount">34</span></div><div class="itemsShowHeaderStock_countText">いいね</div></li><li><div class="itemsShowHeaderStock_count" content="0 UserComments" itemprop="commentCount"><span class="fa fa-comment"></span>0</div><div class="itemsShowHeaderStock_countText">コメント</div></li></ul></div><div class="js-likebutton" data-props="{&quot;like_status&quot;:false,&quot;like_count&quot;:34,&quot;uuid&quot;:&quot;e272ff1aafb3889230bc&quot;,&quot;likable_type&quot;:&quot;Article&quot;,&quot;position&quot;:&quot;article-header&quot;}"><div data-reactroot="" class="LikeButton"><button class="p-button"><span class="fa fa-fw fa-thumbs-up"></span><span>いいね</span></button></div></div><ul class="list-inline ArticleMainHeader__users"><li class="js-hovercard" data-hovercard-target-name="NobiNobiKen"><a itemprop="url" href="http://qiita.com/NobiNobiKen"><img alt="NobiNobiKen" class="thumb thumb--xs" src="./ok_files/1484412460"></a></li><li class="js-hovercard" data-hovercard-target-name="murakami-sw"><a itemprop="url" href="http://qiita.com/murakami-sw"><img alt="murakami-sw" class="thumb thumb--xs" src="./ok_files/30034458"></a></li><li class="js-hovercard" data-hovercard-target-name="toshitanian"><a itemprop="url" href="http://qiita.com/toshitanian"><img alt="toshitanian" class="thumb thumb--xs" src="./ok_files/1473693590"></a></li><li class="js-hovercard" data-hovercard-target-name="TAKAyuki_atkwsk"><a itemprop="url" href="http://qiita.com/TAKAyuki_atkwsk"><img alt="TAKAyuki_atkwsk" class="thumb thumb--xs" src="./ok_files/1473680652"></a></li><li class="js-hovercard" data-hovercard-target-name="ksksk"><a itemprop="url" href="http://qiita.com/ksksk"><img alt="ksksk" class="thumb thumb--xs" src="./ok_files/1473703943"></a></li><li class="js-hovercard" data-hovercard-target-name="marqs"><a itemprop="url" href="http://qiita.com/marqs"><img alt="marqs" class="thumb thumb--xs" src="./ok_files/ba9edee30c0574ccce4bcba1ce66ea44"></a></li><li class="js-hovercard" data-hovercard-target-name="fullkawa"><a itemprop="url" href="http://qiita.com/fullkawa"><img alt="fullkawa" class="thumb thumb--xs" src="./ok_files/1473681991"></a></li><li class="js-hovercard" data-hovercard-target-name="msrks"><a itemprop="url" href="http://qiita.com/msrks"><img alt="msrks" class="thumb thumb--xs" src="./ok_files/1483815015"></a></li><li class="js-hovercard" data-hovercard-target-name="RyujiKawazoe"><a itemprop="url" href="http://qiita.com/RyujiKawazoe"><img alt="RyujiKawazoe" class="thumb thumb--xs" src="./ok_files/1474958320"></a></li><li class="js-hovercard" data-hovercard-target-name="tag1216"><a itemprop="url" href="http://qiita.com/tag1216"><img alt="tag1216" class="thumb thumb--xs" src="./ok_files/1473686636"></a></li><li><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc/likers"><span class="fa fa-ellipsis-h"></span></a></li></ul></div></div></div></div><div class="ArticleAsideHeader"><div class="container"><div class="u-flex u-space-between"><div class="u-flex u-flex-wrap"><div class="u-flex u-align-center s-pdv-5 u-flex-wrap"><div class="ArticleAsideHeader__author"><a href="http://qiita.com/nanakenashi"><img class="thumb thumb--xs" src="./ok_files/1473689415" alt="1473689415"></a> <a class="u-link-unstyled" href="http://qiita.com/nanakenashi">nanakenashi</a> </div><div class="ArticleAsideHeader__date"><span><time datetime="2016-08-31T02:34:36+09:00" itemprop="datePublished">2016年08月31日</time>に投稿</span></div></div><div class="u-flex u-align-center s-pdv-5 mobile-hidden"></div><div class="u-flex u-align-center s-pdv-5 mobile-hidden"></div></div><div class="u-flex u-align-center s-flex-justiry-between s-pdv-5 u-shrink-0"><div class="ArticleAsideHeader__stock"><div class="js-stockbutton" data-position="top" data-props="{&quot;stock_status&quot;:false}"><div data-reactroot="" class="StockButton"><button><div class="StockButton__stock"><div class="fa-stack"><span class="fa fa-folder-open fa-stack-1x unstock"></span></div><!-- react-text: 6 -->&nbsp;<!-- /react-text --><span class="StockButton__label">ストック</span></div></button></div></div></div><div class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#"><span class="fa fa-ellipsis-h fa-lg"></span></a><ul class="dropdown-menu dropdown-menu-right"><li><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc.md"><span class="fa fa-fw fa-file-text-o"></span> Markdownで本文を見る</a></li><li><a data-target=".js-report-form" data-toggle="modal" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#"><span class="fa fa-fw fa-flag"></span> 問題がある投稿を報告する</a></li></ul></div></div></div></div></div><div class="container"><div class="row" id="article-body-wrapper" style="position: relative;"><div class="col-sm-9"><section class="markdownContent markdownContent-headingEnabled js-task-list-container clearfix position-relative" id="item-e272ff1aafb3889230bc" itemprop="articleBody"><div class="alert alert-warning"><i class="fa fa-clock-o"></i> この記事は最終更新日から1年以上が経過しています。</div>
+<h2>
+<span id="概要" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E6%A6%82%E8%A6%81"><i class="fa fa-link"></i></a>概要</h2>
+
+<p>Flaskアプリケーションで設定ファイルを作成する際に<br>
+環境ごとの分割や内容の隠蔽をどうすればうまくいくかの検討をしていました。</p>
+
+<p><a href="http://flask.pocoo.org/docs/0.11/config/" rel="nofollow noopener" target="_blank">公式ドキュメント</a>と<a href="http://damyanon.net/flask-series-configuration/" rel="nofollow noopener" target="_blank">海外の方の記事</a>を読んで思ったことをまとめます。<br>
+このページの大部分は以上の2ページの和訳から作られています。</p>
+
+<h2>
+<span id="flaskにおけるconfig" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#flask%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Bconfig"><i class="fa fa-link"></i></a>Flaskにおけるconfig</h2>
+
+<p>Flaskの設定ファイルで押さえておいたほうが良さそうな部分をまとめます。</p>
+
+<h3>
+<span id="基本的な設定" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E8%A8%AD%E5%AE%9A"><i class="fa fa-link"></i></a>基本的な設定</h3>
+
+<p><code>Flask</code>インスタンスの<code>config</code>変数に辞書形式で書き込むことができます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">基本的な設定</span></div>
+<div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">'DEBUG'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+
+<h3>
+<span id="ファイルからの設定" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A"><i class="fa fa-link"></i></a>ファイルからの設定</h3>
+
+<p>指定したファイルから設定の一覧を読み込むことができます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">ファイルからの設定</span></div>
+<div class="highlight"><pre><span></span><span class="c1"># ファイルパスを直接指定するパターン</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_pyfile</span><span class="p">(</span><span class="s1">'config_file.cfg'</span><span class="p">)</span>
+
+<span class="c1"># ファイルの位置を示す環境変数（絶対パス）を指定するパターン</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_envvar</span><span class="p">(</span><span class="s1">'FLASK_CONFIG_FILE'</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<p>ファイル内では以下のようなINIファイルの形式で設定を記載できます。</p>
+
+<div class="code-frame" data-lang="ini">
+<div class="code-lang"><span class="bold">config_file.cfg</span></div>
+<div class="highlight"><pre><span></span><span class="na">TESTING</span><span class="o">=</span><span class="s">False</span>
+<span class="na">DEBUG</span><span class="o">=</span><span class="s">True</span>
+</pre></div>
+</div>
+
+<h3>
+<span id="オブジェクトからの設定" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A"><i class="fa fa-link"></i></a>オブジェクトからの設定</h3>
+
+<p>Pythonのオブジェクトとして設定を読み込むことができます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">オブジェクトからの設定</span></div>
+<div class="highlight"><pre><span></span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="s1">'config.BaseConfig'</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<p>ソースコード中では<code>from_json</code>というのも見えた気がしましたが、無視します。<br>
+ファイル内では以下のように、Pythonスクリプトとして設定を構造化できます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">config.py</span></div>
+<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BaseConfig</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">False</span>
+
+
+<span class="k">class</span> <span class="nc">DevelopmentConfig</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
+
+
+<span class="k">class</span> <span class="nc">TestingConfig</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">TESTING</span> <span class="o">=</span> <span class="bp">True</span>
+</pre></div>
+</div>
+
+<h3>
+<span id="インスタンスフォルダ" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80"><i class="fa fa-link"></i></a>インスタンスフォルダ</h3>
+
+<p>アプリケーション開発の際にはソースのバージョン管理が不可欠ですが<br>
+設定ファイルにはパスワードやAPIのアクセスキーなどの<br>
+バージョン管理に含めたくない情報が存在します。</p>
+
+<p>Flaskにおいて「インスタンスフォルダ」は<br>
+特定の設定ファイルをバージョン管理から除外するための機能です。</p>
+
+<p><code>Flask</code>の初期化の際に、絶対パスでインスタンスフォルダを指定できます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">インスタンスフォルダのパス指定</span></div>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">instance_path</span><span class="o">=</span><span class="s1">'/path/to/instance/folder'</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<p>この指定がない場合は、デフォルトの<code>instance</code>ディレクトリが<br>
+インスタンスフォルダとして認識されます。</p>
+
+<p>以下のように記載した場合はインスタンスフォルダから相対パスで<br>
+設定ファイルを読み込むことができます。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">相対的なファイルの呼び出し</span></div>
+<div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">instance_relative_config</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_pyfile</span><span class="p">(</span><span class="s1">'application.cfg'</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<p>ここでは<code>instance/application.cfg</code>を参照しています。<br>
+<code>silent=True</code>により、ファイルが見つからなかった場合のエラーを抑制しています。</p>
+
+<p>とはいえ、これだけでバージョン管理から除外できるわけではないので<br>
+<strong>インスタンスフォルダのパスを</strong><code>.gitignore</code><strong>に記載するのを忘れてはいけません。</strong></p>
+
+<h2>
+<span id="ベストプラクティス" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9"><i class="fa fa-link"></i></a>ベストプラクティス</h2>
+
+<p>公式ページに<a href="http://flask.pocoo.org/docs/0.11/config/#configuration-best-practices" rel="nofollow noopener" target="_blank">ベストプラクティス</a>の項がありますが<br>
+内容は短く、あまり具体的な記載はされていません。<br>
+（英語力の問題により、「テストしやすい方が良い」くらいしか読み取れず…）</p>
+
+<p>一方で、<a href="http://damyanon.net/flask-series-configuration/" rel="nofollow noopener" target="_blank">こちら</a>の記事では以下のように記載されています。</p>
+
+<blockquote>
+<p>Good practice is to have a default configuration, which is under source control and to override it with sensitive and specific information kept in instance folders. For the default configuration you could use object-based configuration hierarchy(described in Object-based configuration section) and to manage which configuration object to load via environment variables:</p>
+</blockquote>
+
+<ul>
+<li>デフォルトの設定ファイルはバージョン管理下に置く</li>
+<li>デフォルトの設定はオブジェクトとして書き、環境変数を利用して読み込む</li>
+<li>センシティブな設定はインスタンスフォルダ内の設定で上書きする</li>
+</ul>
+
+<p>最後の項目は<code>development</code>や<code>production</code>などを切り替えるためですね。<br>
+オブジェクトとして記載することにより、テストもしやすくなるはずです。</p>
+
+<p>具体例としては以下のように記載されています。</p>
+
+<div class="code-frame" data-lang="python">
+<div class="code-lang"><span class="bold">ベストプラクティス（非公式）</span></div>
+<div class="highlight"><pre><span></span><span class="c1"># 基本的な設定はバージョン管理下のconfig.pyにオブジェクトとして記載</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">"development"</span><span class="p">:</span> <span class="s2">"bookshelf.config.DevelopmentConfig"</span><span class="p">,</span>
+    <span class="s2">"testing"</span><span class="p">:</span> <span class="s2">"bookshelf.config.TestingConfig"</span><span class="p">,</span>
+    <span class="s2">"default"</span><span class="p">:</span> <span class="s2">"bookshelf.config.DevelopmentConfig"</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">configure_app</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="c1"># 環境変数を利用して読み込む設定ファイルを決定</span>
+    <span class="n">config_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">'FLASK_CONFIGURATION'</span><span class="p">,</span> <span class="s1">'default'</span><span class="p">)</span>
+
+    <span class="c1"># 設定はオブジェクトとして読み込む</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_object</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="n">config_name</span><span class="p">])</span>
+
+    <span class="c1"># センシティブな設定はインスタンスフォルダ内の設定で上書きする</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">from_pyfile</span><span class="p">(</span><span class="s1">'config.cfg'</span><span class="p">,</span> <span class="n">silent</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+
+<h2>
+<span id="まとめ" class="fragment"></span><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%81%BE%E3%81%A8%E3%82%81"><i class="fa fa-link"></i></a>まとめ</h2>
+
+<p>上記の設定をすべてに適用してると大変だと思うので</p>
+
+<ul>
+<li>Hello World!をやる程度なら<code>app.config</code>にベタ書きで指定</li>
+<li>個人で作るような小さめのアプリケーションなら<code>config</code>ファイルで設定</li>
+<li>複数の環境を用意するレベルならベストプラクティスに従う</li>
+</ul>
+
+<p>というくらいの認識を持ちました。</p>
+
+<p>長々書いてしまいましたが、結局は自分自身が納得できるかどうかですよね。<br>
+構成が汚くても、秘密のファイルが流出しなければとりあえずは問題なし。</p>
+
+<p>アプリケーションの拡張に合わせて、より良いかたちを見つけられればと思います。</p>
+<div class="hidden"><form class="js-task-list-update" action="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="_method" value="patch"><input type="hidden" name="authenticity_token" value="BZpgqCUf7Er6GWtYsDpBHE8em2v3n5+YUJEYFR7CZe+L/hB0F5naLrFZvsQ16mUvnoRIiL2D84Mm0Sc/U6zvGA=="><input type="hidden" name="updated_at_confirmation_in_unixtime" id="updated_at_confirmation_in_unixtime" value="1472578476" class="js-task-list-updated-at"><textarea name="raw_body" id="raw_body" class="js-task-list-field">
+## 概要
+
+Flaskアプリケーションで設定ファイルを作成する際に
+環境ごとの分割や内容の隠蔽をどうすればうまくいくかの検討をしていました。
+
+[公式ドキュメント](http://flask.pocoo.org/docs/0.11/config/)と[海外の方の記事](http://damyanon.net/flask-series-configuration/)を読んで思ったことをまとめます。
+このページの大部分は以上の2ページの和訳から作られています。
+
+## Flaskにおけるconfig
+
+Flaskの設定ファイルで押さえておいたほうが良さそうな部分をまとめます。
+
+### 基本的な設定
+
+`Flask`インスタンスの`config`変数に辞書形式で書き込むことができます。
+
+```python:基本的な設定
+app.config['DEBUG'] = True
+```
+
+### ファイルからの設定
+
+指定したファイルから設定の一覧を読み込むことができます。
+
+```python:ファイルからの設定
+# ファイルパスを直接指定するパターン
+app.config.from_pyfile('config_file.cfg')
+
+# ファイルの位置を示す環境変数（絶対パス）を指定するパターン
+app.config.from_envvar('FLASK_CONFIG_FILE')
+```
+
+ファイル内では以下のようなINIファイルの形式で設定を記載できます。
+
+```config_file.cfg
+TESTING=False
+DEBUG=True
+```
+
+### オブジェクトからの設定
+
+Pythonのオブジェクトとして設定を読み込むことができます。
+
+```python:オブジェクトからの設定
+app.config.from_object('config.BaseConfig')
+```
+
+ソースコード中では`from_json`というのも見えた気がしましたが、無視します。
+ファイル内では以下のように、Pythonスクリプトとして設定を構造化できます。
+
+```python:config.py
+class BaseConfig(object):
+    DEBUG = False
+    TESTING = False
+
+
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    TESTING = True
+
+
+class TestingConfig(BaseConfig):
+    DEBUG = False
+    TESTING = True
+```
+
+### インスタンスフォルダ
+
+アプリケーション開発の際にはソースのバージョン管理が不可欠ですが
+設定ファイルにはパスワードやAPIのアクセスキーなどの
+バージョン管理に含めたくない情報が存在します。
+
+Flaskにおいて「インスタンスフォルダ」は
+特定の設定ファイルをバージョン管理から除外するための機能です。
+
+`Flask`の初期化の際に、絶対パスでインスタンスフォルダを指定できます。
+
+```python:インスタンスフォルダのパス指定
+app = Flask(__name__, instance_path='/path/to/instance/folder')
+```
+
+この指定がない場合は、デフォルトの`instance`ディレクトリが
+インスタンスフォルダとして認識されます。
+
+以下のように記載した場合はインスタンスフォルダから相対パスで
+設定ファイルを読み込むことができます。
+
+```python:相対的なファイルの呼び出し
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('application.cfg', silent=True)
+```
+
+ここでは`instance/application.cfg`を参照しています。
+`silent=True`により、ファイルが見つからなかった場合のエラーを抑制しています。
+
+とはいえ、これだけでバージョン管理から除外できるわけではないので
+**インスタンスフォルダのパスを**`.gitignore`**に記載するのを忘れてはいけません。**
+
+## ベストプラクティス
+
+公式ページに[ベストプラクティス](http://flask.pocoo.org/docs/0.11/config/#configuration-best-practices)の項がありますが
+内容は短く、あまり具体的な記載はされていません。
+（英語力の問題により、「テストしやすい方が良い」くらいしか読み取れず…）
+
+一方で、[こちら](http://damyanon.net/flask-series-configuration/)の記事では以下のように記載されています。
+
+&gt; Good practice is to have a default configuration, which is under source control and to override it with sensitive and specific information kept in instance folders. For the default configuration you could use object-based configuration hierarchy(described in Object-based configuration section) and to manage which configuration object to load via environment variables:
+
+* デフォルトの設定ファイルはバージョン管理下に置く
+* デフォルトの設定はオブジェクトとして書き、環境変数を利用して読み込む
+* センシティブな設定はインスタンスフォルダ内の設定で上書きする
+
+最後の項目は`development`や`production`などを切り替えるためですね。
+オブジェクトとして記載することにより、テストもしやすくなるはずです。
+
+具体例としては以下のように記載されています。
+
+```python:ベストプラクティス（非公式）
+# 基本的な設定はバージョン管理下のconfig.pyにオブジェクトとして記載
+config = {
+    "development": "bookshelf.config.DevelopmentConfig",
+    "testing": "bookshelf.config.TestingConfig",
+    "default": "bookshelf.config.DevelopmentConfig"
+}
+
+def configure_app(app):
+    # 環境変数を利用して読み込む設定ファイルを決定
+    config_name = os.getenv('FLASK_CONFIGURATION', 'default')
+    
+    # 設定はオブジェクトとして読み込む
+    app.config.from_object(config[config_name])
+    
+    # センシティブな設定はインスタンスフォルダ内の設定で上書きする
+    app.config.from_pyfile('config.cfg', silent=True)
+```
+
+## まとめ
+
+上記の設定をすべてに適用してると大変だと思うので
+
+* Hello World!をやる程度なら`app.config`にベタ書きで指定
+* 個人で作るような小さめのアプリケーションなら`config`ファイルで設定
+* 複数の環境を用意するレベルならベストプラクティスに従う
+
+というくらいの認識を持ちました。
+
+長々書いてしまいましたが、結局は自分自身が納得できるかどうかですよね。
+構成が汚くても、秘密のファイルが流出しなければとりあえずは問題なし。
+
+アプリケーションの拡張に合わせて、より良いかたちを見つけられればと思います。
+</textarea><input type="submit" name="commit" value="Save changes" data-disable-with="Save changes"></form></div></section></div><div class="col-sm-3"><div class="socialButtons"><div class="socialButtons_twitter"><iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./ok_files/tweet_button.0e55a364e448deca530e9a13f68e1486.en.html" style="position: static; visibility: visible; width: 60px; height: 20px;" data-url="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc"></iframe></div><div class="socialButtons_hatebu"><iframe class="hatena-bookmark-button-frame" title="はてブに追加" frameborder="0" scrolling="no" width="47" height="20" src="javascript:false" style="width: 47px; height: 20px;" src="./ok_files/saved_resource.html"></iframe><script async="async" charset="utf-8" src="./ok_files/bookmark_button.js.ダウンロード" type="text/javascript"></script></div><div class="socialButtons_googlePlus"><div id="___plusone_0" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 32px; height: 20px;"><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 32px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" width="100%" id="I0_1505287563049" name="I0_1505287563049" src="./ok_files/fastbutton.html" data-gapiattached="true" title="G+"></iframe></div></div><div class="socialButtons_facebook"><div class="fb-like fb_iframe_widget" data-action="like" data-href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc" data-layout="button_count" data-share="false" data-show-faces="false" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=222621691108322&amp;container_width=0&amp;href=http%3A%2F%2Fqiita.com%2Fnanakenashi%2Fitems%2Fe272ff1aafb3889230bc&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=false&amp;show_faces=false"><span style="vertical-align: bottom; width: 61px; height: 20px;"><iframe name="fec718eab5d39" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:like Facebook Social Plugin" src="./ok_files/like.html" style="border: none; visibility: visible; width: 61px; height: 20px;" class=""></iframe></span></div></div><div class="socialButtons_pocket"><div class="pocket-btn"><iframe width="135" height="22" id="pocket-button-0" frameborder="0" allowtransparency="true" scrolling="NO" src="./ok_files/button.html"></iframe></div></div></div><section class="itemsShowAuthorInfo" itemprop="author" itemscope="" itemtype="http://schema.org/Person"><a href="http://qiita.com/nanakenashi"><img alt="" class="itemsShowAuthorInfo_userIcon" itemprop="image" src="./ok_files/1473689415"></a><div class="itemsShowAuthorInfo_profileStats"><strong class="itemsShowAuthorInfo_userName" itemprop="name"><a itemprop="url" href="http://qiita.com/nanakenashi">nanakenashi</a></strong><div class="itemsShowAuthorInfo_contribution"><span class="itemsShowAuthorInfo_count">194</span><span class="itemsShowAuthorInfo_unit">Contribution</span></div><script type="application/json" id="js-react-on-rails-context">{}</script>
+<script type="application/json" class="js-react-on-rails-component" data-component-name="UserFollowButton" data-dom-id="UserFollowButton-react-component-8729d4d8-ecf7-43f9-98c1-d64cbd565a79">{"initial_followed_by":false,"position":"author-info","size":"btn-xs","url_name":"nanakenashi"}</script>
+    <div id="UserFollowButton-react-component-8729d4d8-ecf7-43f9-98c1-d64cbd565a79"><span data-reactroot="" class="userFollowButton"><button class="btn btn-default btn-block userFollowButton_inner btn-xs"><i class="i fa fa-user-plus"></i><!-- react-text: 4 -->フォロー<!-- /react-text --></button></span></div>
+    
+</div><section class="itemsShowAuthorPopularItems"><h5 class="itemsShowAuthorPopularItems_sectionTitle">人気の投稿</h5><ul class="itemsShowAuthorPopularItems_posts list-unstyled"><li itemscope="" itemtype="http://schema.org/Article"> <a itemprop="url" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc">Flaskにおける設定ファイルのベストプラクティス</a></li><li itemscope="" itemtype="http://schema.org/Article"> <a itemprop="url" href="http://qiita.com/nanakenashi/items/6497caf1c56c36f47be9">Flask-SocketIOでWebSocketアプリケーション</a></li><li itemscope="" itemtype="http://schema.org/Article"> <a itemprop="url" href="http://qiita.com/nanakenashi/items/2f932bb84f05e84df954">DockerとErrbotでお手軽Slackbot</a></li><li itemscope="" itemtype="http://schema.org/Article"> <a itemprop="url" href="http://qiita.com/nanakenashi/items/cbe8e8ef878121638514">Dockerを使って低コストでFlaskの開発環境を構築</a></li><li itemscope="" itemtype="http://schema.org/Article"> <a itemprop="url" href="http://qiita.com/nanakenashi/items/5df002feea2e4a0a867b">AWSにおけるDockerコンテナの監視</a></li></ul></section><section class="itemsShowAuthorInfo_organization"><h5 class="itemsShowAuthorInfo_organizationTitle">Organization</h5><span itemprop="memberOf" itemscope="" itemtype="http://schema.org/Organization"><a itemprop="url" href="http://qiita.com/organizations/lifull"><img alt="株式会社LIFULL" class="itemsShowAuthorInfo_organizationLogo" itemprop="image" src="./ok_files/original.jpg"></a></span></section></section><div class="scroll-chaser"></div><script type="application/json" class="js-react-on-rails-component" data-component-name="Toc" data-dom-id="Toc-react-component-99f14287-d31a-4417-9b51-9353512bf269">{"body":"\u003cul\u003e\n\u003cli\u003e\n\u003ca href=\"#%E6%A6%82%E8%A6%81\"\u003e概要\u003c/a\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#flask%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Bconfig\"\u003eFlaskにおけるconfig\u003c/a\u003e\n\u003cul\u003e\n\u003cli\u003e\n\u003ca href=\"#%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E8%A8%AD%E5%AE%9A\"\u003e基本的な設定\u003c/a\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A\"\u003eファイルからの設定\u003c/a\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A\"\u003eオブジェクトからの設定\u003c/a\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80\"\u003eインスタンスフォルダ\u003c/a\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9\"\u003eベストプラクティス\u003c/a\u003e\n\u003c/li\u003e\n\u003cli\u003e\n\u003ca href=\"#%E3%81%BE%E3%81%A8%E3%82%81\"\u003eまとめ\u003c/a\u003e\n\u003c/li\u003e\n\u003c/ul\u003e\n","wrapper":"#article-body-wrapper"}</script>
+    <div id="Toc-react-component-99f14287-d31a-4417-9b51-9353512bf269"><div style="position: relative; top: 0px; height: 0px;"></div><div data-reactroot="" class="tocTree" style="width: 270px; position: fixed; top: 0px;"><div class="tocTree_contents nav" style="max-height: 658px;"><ul>
+<li class="">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E6%A6%82%E8%A6%81">概要</a>
+</li>
+<li class="active">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#flask%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8Bconfig">Flaskにおけるconfig</a>
+<ul>
+<li class="">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E5%9F%BA%E6%9C%AC%E7%9A%84%E3%81%AA%E8%A8%AD%E5%AE%9A">基本的な設定</a>
+</li>
+<li class="active">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A">ファイルからの設定</a>
+</li>
+<li class="">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%8B%E3%82%89%E3%81%AE%E8%A8%AD%E5%AE%9A">オブジェクトからの設定</a>
+</li>
+<li class="">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%82%A4%E3%83%B3%E3%82%B9%E3%82%BF%E3%83%B3%E3%82%B9%E3%83%95%E3%82%A9%E3%83%AB%E3%83%80">インスタンスフォルダ</a>
+</li>
+</ul>
+</li>
+<li class="">
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9">ベストプラクティス</a>
+</li>
+<li>
+<a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a>
+</li>
+</ul>
+</div></div></div>
+    
+</div></div><div class="row"><div class="col-sm-9"><div class="ArticleFooter__menu"><div class="s-flex-align-center"><div class="js-likebutton" data-props="{&quot;like_status&quot;:false,&quot;like_count&quot;:34,&quot;show_count&quot;:true,&quot;uuid&quot;:&quot;e272ff1aafb3889230bc&quot;,&quot;likable_type&quot;:&quot;Article&quot;,&quot;position&quot;:&quot;article-footer&quot;}"><div data-reactroot="" class="LikeButton"><button class="p-button"><span class="fa fa-fw fa-thumbs-up"></span><span>いいね</span></button><div class="LikeButton__balloon">34</div></div></div><div class="ArticleFooter__userList"><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="SaitoTsutomu"><a itemprop="url" href="http://qiita.com/SaitoTsutomu"><img alt="SaitoTsutomu" class="thumb thumb--xs" src="./ok_files/1491373112"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="keitaoouchi"><a itemprop="url" href="http://qiita.com/keitaoouchi"><img alt="keitaoouchi" class="thumb thumb--xs" src="./ok_files/1481159642"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="sh0"><a itemprop="url" href="http://qiita.com/sh0"><img alt="sh0" class="thumb thumb--xs" src="./ok_files/1473715321"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="orange634"><a itemprop="url" href="http://qiita.com/orange634"><img alt="orange634" class="thumb thumb--xs" src="./ok_files/1488906054"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="quenhulu"><a itemprop="url" href="http://qiita.com/quenhulu"><img alt="quenhulu" class="thumb thumb--xs" src="./ok_files/1473683459"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="1-AizawaSatoshi"><a itemprop="url" href="http://qiita.com/1-AizawaSatoshi"><img alt="1-AizawaSatoshi" class="thumb thumb--xs" src="./ok_files/1473707150"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="divider_kuro"><a itemprop="url" href="http://qiita.com/divider_kuro"><img alt="divider_kuro" class="thumb thumb--xs" src="./ok_files/1473697190"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="hiracchi"><a itemprop="url" href="http://qiita.com/hiracchi"><img alt="hiracchi" class="thumb thumb--xs" src="./ok_files/1473681942"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="yakawa"><a itemprop="url" href="http://qiita.com/yakawa"><img alt="yakawa" class="thumb thumb--xs" src="./ok_files/1473696589"></a></div></div><div class="ArticleFooter__user"><div class="js-hovercard" data-hovercard-target-name="haburibe"><a itemprop="url" href="http://qiita.com/haburibe"><img alt="haburibe" class="thumb thumb--xs" src="./ok_files/1473681937"></a></div></div><div class="ArticleFooter__user"><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc/likers"><span class="fa fa-ellipsis-h"></span></a></div></div></div><div class="u-flex u-align-center"><div class="ArticleFooter__stock"><div class="js-stockbutton" data-position="footer_menu" data-props="{&quot;stock_status&quot;:false}"><div data-reactroot="" class="StockButton"><button><div class="StockButton__stock"><div class="fa-stack"><span class="fa fa-folder-open fa-stack-1x unstock"></span></div><!-- react-text: 6 -->&nbsp;<!-- /react-text --><span class="StockButton__label">ストック</span></div></button></div></div></div><div class="ArticleFooter__editRequest"><a class="u-link-no-underline" data-toggle="tooltip" title="" href="http://qiita.com/drafts/e272ff1aafb3889230bc/edit" data-original-title="投稿者に記事をより良くするための提案ができます 💪"><span class="fa fa-send-o fa-lg"></span> <span>編集リクエスト</span></a></div><div class="dropdown ArticleFooter__dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#"><span class="fa fa-ellipsis-h"></span></a><ul class="dropdown-menu dropdown-menu-right"><li><a href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc.md"><span class="fa fa-fw fa-file-text-o"></span> Markdownで本文を見る</a></li><li><a data-target=".js-report-form" data-toggle="modal" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc#"><i class="fa fa-fw fa-flag"></i> 問題がある投稿を報告する</a></li></ul></div></div></div><div class="itemsShowBody_articleColumnFooter"><div class="socialButtons"><div class="socialButtons_twitter"><iframe id="twitter-widget-1" scrolling="no" frameborder="0" allowtransparency="true" class="twitter-share-button twitter-share-button-rendered twitter-tweet-button" title="Twitter Tweet Button" src="./ok_files/tweet_button.0e55a364e448deca530e9a13f68e1486.en(1).html" style="position: static; visibility: visible; width: 60px; height: 20px;" data-url="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc"></iframe></div><div class="socialButtons_hatebu"><iframe class="hatena-bookmark-button-frame" title="はてブに追加" frameborder="0" scrolling="no" width="47" height="20" src="javascript:false" style="width: 47px; height: 20px;" src="./ok_files/saved_resource(1).html"></iframe><script async="async" charset="utf-8" src="./ok_files/bookmark_button.js.ダウンロード" type="text/javascript"></script></div><div class="socialButtons_googlePlus"><div id="___plusone_1" style="text-indent: 0px; margin: 0px; padding: 0px; background: transparent; border-style: none; float: none; line-height: normal; font-size: 1px; vertical-align: baseline; display: inline-block; width: 32px; height: 20px;"><iframe ng-non-bindable="" frameborder="0" hspace="0" marginheight="0" marginwidth="0" scrolling="no" style="position: static; top: 0px; width: 32px; margin: 0px; border-style: none; left: 0px; visibility: visible; height: 20px;" tabindex="0" vspace="0" width="100%" id="I1_1505287563053" name="I1_1505287563053" src="./ok_files/fastbutton(1).html" data-gapiattached="true" title="G+"></iframe></div></div><div class="socialButtons_facebook"><div class="fb-like fb_iframe_widget" data-action="like" data-href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc" data-layout="button_count" data-share="false" data-show-faces="false" fb-xfbml-state="rendered" fb-iframe-plugin-query="action=like&amp;app_id=222621691108322&amp;container_width=0&amp;href=http%3A%2F%2Fqiita.com%2Fnanakenashi%2Fitems%2Fe272ff1aafb3889230bc&amp;layout=button_count&amp;locale=en_US&amp;sdk=joey&amp;share=false&amp;show_faces=false"><span style="vertical-align: bottom; width: 61px; height: 20px;"><iframe name="f1271a94187079c" width="1000px" height="1000px" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" title="fb:like Facebook Social Plugin" src="./ok_files/like(1).html" style="border: none; visibility: visible; width: 61px; height: 20px;" class=""></iframe></span></div></div><div class="socialButtons_pocket"><div class="pocket-btn"><iframe width="135" height="22" id="pocket-button-1" frameborder="0" allowtransparency="true" scrolling="NO" src="./ok_files/button(1).html"></iframe></div></div></div></div><div class="itemsShowComment_wrapper" id="comments"><script type="application/json" class="js-react-on-rails-component" data-component-name="PublicCommentListContainer" data-dom-id="PublicCommentListContainer-react-component-9671f763-1476-451e-8729-e4b7282d5e02">{"currentUser":{"contribution":391,"created_at":"2014-10-21T18:41:49+09:00","id":57059,"is_admin":false,"profile_image_url":"https://qiita-image-store.s3.amazonaws.com/0/57059/profile-images/1473694195","suspended":false,"url_name":"u6k"},"initialComments":[],"monthly_public_image_uploadable_size_limit":104857600,"total_uploaded_public_image_size_in_current_month":0,"item":{"id":419196,"uuid":"e272ff1aafb3889230bc","suspended":false,"secret":false},"owner":{"url_name":"nanakenashi"},"is_team":false,"is_project":false,"logged_in":true,"polling":false,"mention_candidates":[{"id":43116,"url_name":"nanakenashi","profile_image_url":"https://qiita-image-store.s3.amazonaws.com/0/43116/profile-images/1473689415"}]}</script>
+    <div id="PublicCommentListContainer-react-component-9671f763-1476-451e-8729-e4b7282d5e02"><div data-reactroot="" class="commentList"><!-- react-empty: 2 --><div class="commentForm"><form datatype="json" action="http://qiita.com/comments/" method="post"><div class="commentForm_header"><img class="commentForm_userIcon" src="./ok_files/1473694195" width="36" height="36"><div class="commentForm_headerLabel">コメントを投稿する</div></div><div class="commentForm_contentHeader"><div class="commentForm_tabs"><a class="commentForm_tab edit active">編集</a><a class="commentForm_tab preview ">プレビュー</a></div><div class="commentForm_toolbar" style="display: flex;"><div class="markdownHelp_button"><i class="fa fa-question-circle" data-tip="Markdown の書き方" data-for="markdown-help-button" currentitem="false"><div class="__react_component_tooltip place-top type-dark " data-id="tooltip"></div></i><!-- react-empty: 16 --></div><div class="emojiPicker"><span class="emojiPicker_label"><i class="fa fa-smile-o" data-tip="絵文字" currentitem="false"></i><div class="__react_component_tooltip place-top type-dark " data-id="tooltip"></div></span><div class="emojiPicker_container"></div></div></div></div><div class="commentForm_body content-area tab-pane" style="display: block;"><textarea class="form-control commentForm_textarea" maxlength="10000" placeholder="コメントを入力してください" style="min-height: 100px; max-height: 500px; overflow: hidden; word-wrap: break-word; resize: none; height: 100px;"></textarea></div><div class="preview-area tab-pane" style="display: none;"></div><div class="commentForm_imageUploader"><input type="file" class="commentForm_inputImageFile" tabindex="-1"><span class="btn btn-default btn-xs commentForm_imageUploader-button"><i class="fa fa-picture-o"></i><!-- react-text: 29 -->画像を選択<!-- /react-text --></span><span class="commentForm_imageUploader-text">またはドラッグ＆ドロップ</span><span><span class="commentForm_imageUploader-size"><span><!-- react-text: 34 --> - <!-- /react-text --><!-- react-text: 35 -->0B<!-- /react-text --></span><!-- react-text: 36 -->/<!-- /react-text --><span>100MB</span></span><i class="fa fa-info-circle commentForm_imageUploader-info" data-placement="top" data-toggle="tooltip" title="" data-original-title="今月アップロード可能な画像の残り容量です"></i></span><div class="commentForm_btns"><button class="btn btn-primary btn-sm">投稿</button></div></div></form></div></div></div>
+    
+</div></div></div></div></article><div class="js-report-form modal fade reportForm"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button name="button" type="submit" class="close" data-dismiss="modal">×</button><h4 class="modal-title">問題がある投稿を報告する</h4></div><div class="modal-body"><form class="new_public_issue_report" id="new_public_issue_report" action="http://qiita.com/api/internal/issue_reports" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="BZpgqCUf7Er6GWtYsDpBHE8em2v3n5+YUJEYFR7CZe+L/hB0F5naLrFZvsQ16mUvnoRIiL2D84Mm0Sc/U6zvGA=="><input type="hidden" value="PublicDomainArticle" name="public_issue_report[target_type]" id="public_issue_report_target_type"><input type="hidden" value="419196" name="public_issue_report[target_id]" id="public_issue_report_target_id"><p>この投稿にどのような問題がありますか？</p><br><div class="form-group"><ul class="list-unstyled"><li><label><input required="required" type="radio" value="spam" name="public_issue_report[reason]" id="public_issue_report_reason_spam"> スパムです </label></li><li><label><input required="required" type="radio" value="harassment" name="public_issue_report[reason]" id="public_issue_report_reason_harassment"> 攻撃的または迷惑な内容を含んでいます </label></li><li><label><input required="required" type="radio" value="inappropriate_content" name="public_issue_report[reason]" id="public_issue_report_reason_inappropriate_content"> 不適切な内容を含んでいます </label></li></ul></div><div class="reportForm_submitButtonContainer"><button name="button" type="submit" class="btn btn-primary reportForm_submitButton"><i class="fa fa-send"></i> 送信</button></div></form></div></div></div></div><script id="js-item" type="application/json">{ "url": "http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc", "id": 419196, "uuid": "e272ff1aafb3889230bc" }</script><script class="js-user" type="application/json">{&quot;id&quot;:43116,&quot;url_name&quot;:&quot;nanakenashi&quot;,&quot;profile_image_url&quot;:&quot;https://qiita-image-store.s3.amazonaws.com/0/43116/profile-images/1473689415&quot;,&quot;following&quot;:false}</script><script language="JavaScript" src="./ok_files/qiita_bigmining.js.ダウンロード" type="text/javascript"></script></div><footer class="footer"><div class="footer_inner"><div class="footer_container"><ul class="footer_links-left"><li class="footer_link"><a class="footer_copyright" href="http://increments.co.jp/">© 2011-2017 Increments Inc.</a></li><li class="footer_link"><a href="http://qiita.com/terms">利用規約</a></li><li class="footer_link"><a href="http://qiita.com/privacy">プライバシー</a></li><li class="footer_link"><a href="http://help.qiita.com/">ヘルプ</a></li><li class="footer_link"><a href="https://increments.zendesk.com/anonymous_requests/new">お問い合わせ</a></li></ul><ul class="footer_links-right"><li class="footer_link"><a href="http://qiita.com/about">Qiitaとは</a></li><li class="footer_link"><a href="http://qiita.com/users">ユーザー</a></li><li class="footer_link"><a href="http://qiita.com/tags">タグ</a></li><li class="footer_link"><a href="http://blog.qiita.com/">ブログ</a></li><li class="footer_link"><a href="http://qiita.com/api/v2/docs">API</a></li><li class="footer_link"><a href="https://teams.qiita.com/">Team</a></li><li class="footer_link"><a href="http://kobito.qiita.com/">Kobito</a></li><li class="footer_link"><a class="js-public-form-feedback-link" data-target=".js-feedback-form" data-toggle="modal" href="http://qiita.com/nanakenashi/items/e272ff1aafb3889230bc"><i class="fa fa-heart"></i> ご意見 <i class="fa fa-caret-down"></i></a></li></ul></div></div></footer><div class="js-feedback-form modal fade feedbackForm"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button name="button" type="submit" class="close" data-dismiss="modal">×</button><h4 class="modal-title">ご意見</h4></div><div class="modal-body"><form class="js-feedback-form-form" action="http://qiita.com/feedbacks" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="BZpgqCUf7Er6GWtYsDpBHE8em2v3n5+YUJEYFR7CZe+L/hB0F5naLrFZvsQ16mUvnoRIiL2D84Mm0Sc/U6zvGA=="><input type="hidden" name="redirect_path" id="redirect_path" value="/nanakenashi/items/e272ff1aafb3889230bc"><div class="form-group"><textarea name="feedback[message]" id="feedback_message" class="form-control js-feedback-form-text-area" placeholder="Qiitaについてのご意見をお聞かせください。" required="required" rows="5"></textarea></div><div class="feedbackForm_submitButtonContainer"><button name="button" type="submit" class="btn btn-primary feedbackForm_submitButton"><i class="fa fa-send"></i> 送信</button><p class="feedbackForm_note">いただいたご意見への返信は行っておりません。<br>返信の必要な内容については、<a href="https://increments.zendesk.com/anonymous_requests/new">こちら</a> からお問い合わせください。</p></div><div style="position:fixed;top:-99999px;opacity:0.0001;"><input name="feedback[name]" type="text"></div></form></div></div></div></div><script>// if (window.mixpanel instanceof Element) {
+//   window.mixpanel = [];
+// }
+// (function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
+// for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2.2.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);</script><script src="./ok_files/public-5c04804ac638c312c173116126b65a77.min.js.ダウンロード"></script><div id="fb-root" class=" fb_reset"><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div><iframe name="fb_xdm_frame_http" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_http" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./ok_files/0sTQzbapM8j.html" style="border: none;"></iframe><iframe name="fb_xdm_frame_https" frameborder="0" allowtransparency="true" allowfullscreen="true" scrolling="no" id="fb_xdm_frame_https" aria-hidden="true" title="Facebook Cross Domain Communication Frame" tabindex="-1" src="./ok_files/0sTQzbapM8j(1).html" style="border: none;"></iframe></div></div><div style="position: absolute; top: -10000px; height: 0px; width: 0px;"><div></div></div></div><div class="ReactModalPortal"><div data-reactroot=""></div></div><div class="ReactModalPortal"><div data-reactroot=""></div></div><ul class="dropdown-menu textcomplete-dropdown" style="display: none; position: absolute; z-index: 10000;"></ul><iframe name="oauth2relay307090513" id="oauth2relay307090513" src="./ok_files/postmessageRelay.html" tabindex="-1" aria-hidden="true" style="width: 1px; height: 1px; position: absolute; top: -100px;"></iframe><iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" title="Twitter analytics iframe" src="./ok_files/saved_resource(2).html"></iframe><img src="./ok_files/dmp" width="1" height="1" border="0" style="display: none;"><img src="./ok_files/pixel" width="1" height="1" border="0" style="display: none;"><img src="./ok_files/adsct" width="1" height="1" border="0" style="display: none;"><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-58Z82M');</script><div style="display: none; visibility: hidden;"><iframe src="./ok_files/activityi(2).html" width="1" height="1" frameborder="0" style="display:none"></iframe></div><div style="display: none; visibility: hidden;"><iframe src="./ok_files/activityi(3).html" width="1" height="1" frameborder="0" style="display:none"></iframe></div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nv2kc",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","809797712462041");fbq("track","PageView");</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script>!function(d,e,f,a,b,c){d.twq||(a=d.twq=function(){a.exe?a.exe.apply(a,arguments):a.queue.push(arguments)},a.version="1.1",a.queue=[],b=e.createElement(f),b.async=!0,b.src="//static.ads-twitter.com/uwt.js",c=e.getElementsByTagName(f)[0],c.parentNode.insertBefore(b,c))}(window,document,"script");twq("init","nxmb9");twq("track","PageView");</script>
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","996402550503199");fbq("track","PageView");</script>
+<noscript></noscript>
+
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","954575148009345");fbq("track","PageView");</script>
+<noscript></noscript>
+
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","437265843064161");fbq("track","PageView");</script>
+<noscript></noscript>
+
+
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nw0lq",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nw1xy",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nw9n2",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","262978464137256");fbq("track","PageView");</script>
+<noscript></noscript>
+
+
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","256605841418458");fbq("track","PageView");</script>
+<noscript></noscript>
+
+
+</div><div style="display: none; visibility: hidden;">
+<script>!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","386990638325508");fbq("track","PageView");</script>
+<noscript></noscript>
+
+
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nxlif",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nxlih",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("nxyp7",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><div style="display: none; visibility: hidden;">
+<script src="./ok_files/oct.js.ダウンロード" type="text/javascript"></script>
+<script type="text/javascript">twttr.conversion.trackPid("ny46g",{tw_sale_amount:0,tw_order_quantity:0});</script>
+<noscript></noscript>
+</div><script src="./ok_files/adsct(1)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(3)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(4)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(5)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(6)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(7)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(8)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script><script src="./ok_files/adsct(9)" type="text/javascript"></script><script src="./ok_files/adsct(2)" type="text/javascript"></script></body></html>
