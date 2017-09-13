@@ -10,7 +10,14 @@ class HtmlContentExtractor():
         logger.info("HtmlContentExtractor.__init__: url=%s, full_content is None=%s", url, (full_content == None))
 
         # validate
+        if not isinstance(url, str):
+            raise RuntimeError("url not str.")
+        if len(url) == 0:
+            raise RuntimeException("len(url) == 0")
+
         if full_content is not None:
+            if not isinstance(full_content, str):
+                raise RuntimeError("full_content not str.")
             if len(full_content) == 0:
                 raise ContentNoDataException(url)
 
@@ -27,9 +34,9 @@ class HtmlContentExtractor():
             logger.debug("requests.get: start. url=%s", url)
             try:
                 r = requests.get(url, timeout=timeout)
-            except requests.exceptions.ConnectTimeout as ex:
+            except requests.exceptions.RequestException as ex:
                 logger.warn("requests.get: fail. exception=%s", repr(ex))
-                raise TimeoutException(url)
+                raise ContentRequestFailException(url)
             logger.debug("requests.get: end. status_code=%s, content_type=%s, len(full_content)=%s", r.status_code, r.headers["content-type"], len(r.text))
 
             logger.debug("request result check: start.")
@@ -95,6 +102,6 @@ class ContentNoDataException(Exception):
     def __init__(self, url):
         self.url = url
 
-class TimeoutException(Exception):
+class ContentRequestFailException(Exception):
     def __init__(self, url):
         self.url = url
