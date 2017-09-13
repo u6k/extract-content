@@ -3,30 +3,49 @@ import requests
 import pypandoc
 import codecs
 from auto_abstracts.auto_abstractor import AutoAbstractor, AbstractableTopNRank
+from . import logger
 
 class HtmlContentExtractor():
-    def __init__(self, url):
-        logger.info("HtmlContentExtractor.__init__: url=%s", url)
+    def __init__(self, url, full_content=None, timeout=10):
+        logger.info("HtmlContentExtractor.__init__: url=%s, full_content is None=%s", url, (full_content == None))
+
+        # validate
+        if full_content is not None:
+            if len(full_content) == 0:
+                raise ContentNoDataException(url)
 
         # Initialize instance variable
         self.url = url
         self.title = ""
-        self.full_content = ""
+        self.full_content = full_content
         self.content = ""
         self.simplified_content = ""
         self.summary_list = ""
 
         # Get html document
-        logger.debug("requests.get: start. url=%s", url)
-        r = requests.get(url)
-        logger.debug("requests.get: end. status_code=%s, content_type=%s", r.status_code, r.headers["content-type"])
+        if self.full_content is None:
+            logger.debug("requests.get: start. url=%s", url)
+            try:
+                r = requests.get(url, timeout=timeout)
+            except requests.exceptions.ConnectTimeout as ex:
+                logger.warn("requests.get: fail. exception=%s", repr(ex))
+                raise TimeoutException(url)
+            logger.debug("requests.get: end. status_code=%s, content_type=%s, len(full_content)=%s", r.status_code, r.headers["content-type"], len(r.text))
+
+            logger.debug("request result check: start.")
+            if r.status_code == 404:
+                raise ContentNotFoundException(url)
+            if len(r.text) == 0:
+                raise ContentNoDataException(url)
+            logger.debug("request result check: end.")
+
+            logger.debug("get full_content: start.")
+            self.full_content = r.text
+            logger.debug("get full_content: end. len(full_content)=%s", len(self.full_content))
+        else:
+            logger.debug("full_content not None")
 
         # Analyze html document
-
-        ## Get full content
-        logger.debug("get full_content: start.")
-        self.full_content = r.text
-        logger.debug("get full_content: end. len(full_content)=%s", len(self.full_content))
 
         ## Get extracted content
         logger.debug("extract content: start.")
@@ -67,3 +86,15 @@ class HtmlContentExtractor():
         logger.debug("to dictionary: end.")
 
         return result
+
+class ContentNotFoundException(Exception):
+    def __init__(self, url):
+        self.url = url
+
+class ContentNoDataException(Exception):
+    def __init__(self, url):
+        self.url = url
+
+class TimeoutException(Exception):
+    def __init__(self, url):
+        self.url = url
