@@ -75,5 +75,5 @@ class TestHtmlContentExtractor(TestCase):
         assert len(extractor.summary_list) == 3
 
     def test_timeout(self):
-        with raises(TimeoutException):
+        with raises(ContentRequestFailException):
             HtmlContentExtractor("http://jp.techcrunch.com/2017/09/08/20170907google-publishes-its-documentation-style-guide-for-developers/", timeout=0.001)

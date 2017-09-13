@@ -34,9 +34,9 @@ class HtmlContentExtractor():
             logger.debug("requests.get: start. url=%s", url)
             try:
                 r = requests.get(url, timeout=timeout)
-            except requests.exceptions.ConnectTimeout as ex:
+            except requests.exceptions.RequestException as ex:
                 logger.warn("requests.get: fail. exception=%s", repr(ex))
-                raise TimeoutException(url)
+                raise ContentRequestFailException(url)
             logger.debug("requests.get: end. status_code=%s, content_type=%s, len(full_content)=%s", r.status_code, r.headers["content-type"], len(r.text))
 
             logger.debug("request result check: start.")
@@ -102,6 +102,6 @@ class ContentNoDataException(Exception):
     def __init__(self, url):
         self.url = url
 
-class TimeoutException(Exception):
+class ContentRequestFailException(Exception):
     def __init__(self, url):
         self.url = url
