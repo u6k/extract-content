@@ -75,6 +75,7 @@
             </div>
             <button id="submit" type="button" class="btn btn-primary">Submit</button>
             <button id="submit_disabled" type="button" class="btn btn-primary" style="display:none" disabled><i class="fa fa-circle-o-notch fa-spin fa-lg fa-fw"></i><span class="sr-only">Loading...</span> Loading...</button>
+            <div id="alert" class="alert alert-danger" role="alert" style="display:none">alert</div>
         </form>
 
         <hr />
@@ -114,19 +115,35 @@
     <script src="./highlightjs-line-numbers.min.js"></script>
     <script>
         $(function () {
+            /*
+             * Submit
+             */
             $("#submit").on("click", function () {
+                // Validate
+                if ($("#url").val().length == 0) {
+                    $("#alert").empty();
+                    $("#alert").text("URLを入力してください。");
+                    $("#alert").show();
+                    return;
+                }
+
+                // Control display
                 $("#submit").hide();
                 $("#submit_disabled").show();
+                $("#alert").hide();
 
+                // Submit
                 $.ajax("/extract",
                     {
                         type: "get",
                         data: {
                             url: $("#url").val()
                         },
-                        cache: false
+                        cache: false,
+                        timeout: 10000
                     }
                 ).done(function (data) {
+                    // Render result
                     console.log(data);
                     $("#result_json").empty();
                     $("#result_json").text(JSON.stringify(data, null, 2));
@@ -142,18 +159,27 @@
                         hljs.lineNumbersBlock(block);
                     });
 
-                    $("#submit").show();
-                    $("#submit_disabled").hide();
-
+                    // Scroll to result
                     var heading_result_json_position = $("#heading_result_json").offset().top - 70;
                     $("body,html").animate({ scrollTop: heading_result_json_position }, 500, "swing");
+                }).fail(function () {
+                    $("#alert").empty();
+                    $("#alert").text("サーバー側でエラーが発生しました。お手数ですが、別のURLでお試しください。");
+                    $("#alert").show();
+                }).always(function () {
+                    $("#submit").show();
+                    $("#submit_disabled").hide();
                 });
             });
 
+            /*
+             * Get version
+             */
             $.ajax("/info",
                 {
                     type: "get",
-                    cache: false
+                    cache: false,
+                    timeout: 10000,
                 }
             ).done(function (data) {
                 console.log(data);
