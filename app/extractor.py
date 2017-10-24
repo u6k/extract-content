@@ -68,7 +68,7 @@ class HtmlContentExtractor():
         ## Get simplified content
         logger.debug("content simplify: start.")
         markdown_content = pypandoc.convert_text(self.content, "markdown_github", format="html", extra_args=["--normalize", "--no-wrap"])
-        self.simplified_content = pypandoc.convert_text(markdown_content, "html", format="markdown_github")
+        self.simplified_content = pypandoc.convert_text(markdown_content, "html", format="markdown_github", extra_args=["--email-obfuscation=none"])
         logger.debug("content simplify: end. len(simplified_content)=%s", len(self.simplified_content))
 
         # Get summary
