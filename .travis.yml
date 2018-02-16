@@ -1,0 +1,27 @@
+sudo: required
+language: java
+
+services:
+    - docker
+
+before_install:
+    - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    - sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    - sudo apt-get update
+    - sudo apt-get -y install docker-ce
+
+script:
+    # test
+    - docker build -t extract-content-dev -f Dockerfile-dev .
+    - docker run -v ${PWD}:/opt/extract-content extract-content-dev py.test --capture=no --junit-xml=build/results.xml
+    # build
+    - docker build -t u6kapps/extract-content .
+
+after_success:
+    - if [ -n "$TRAVIS_TAG" ]; then
+          docker login -u "$DOCKER_USER" -p "$DOCKER_PASS";
+          docker tag u6kapps/extract-content u6kapps/extract-content:$TRAVIS_TAG;
+          docker push u6kapps/extract-content;
+      else
+          echo skip docker push;
+      fi
