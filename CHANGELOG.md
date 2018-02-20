@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.4](https://github.com/u6k/extract-content/releases/tag/2.0.4) - 2018-02-20
+
+### Fixed
+
+- [機能 #6047: デモサイトのバッヂをTravis CIに修正する - extract-content - u6k.Redmine](https://redmine.u6k.me/issues/6047)
+
 ## [2.0.3](https://github.com/u6k/extract-content/releases/tag/2.0.3) - 2018-02-17
 
 ### Added
