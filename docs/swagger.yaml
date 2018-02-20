@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   title: "extract-content"
   description: "HTML文書の本文部分を抽出します。"
-  version: 2.0.3
+  version: 2.0.4
   contact:
     url: "https://github.com/u6k"
   license:
